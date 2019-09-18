@@ -25,7 +25,7 @@ SentenceSplitter(){
   RE_Options options = UTF8();
   options.set_multiline(true).set_dotall(true).set_dollar_endonly(true);
   eos.reset(new RE("([^\\s].*?([^\\s]*?)([.?!]+)['\")\\]\\p{Pf}]*)(?:\\s+|$)"
-                   "(?=(['\"(\\[¿¡\n\\p{Pi}]*)[\\s]*\\p{Lu}|$)", options));
+                   "(?=(['\"(\\[¿¡\\r\\n\\p{Pi}]*)[\\s]*\\p{Lu}|$)", options));
   // Abbreviations:
   abbrev.reset(new RE("(?:\\p{L}\\.)+\\p{L}",UTF8()));
 
@@ -37,8 +37,7 @@ SentenceSplitter::
 SentenceSplitter(std::string const& prefix_file)
   : SentenceSplitter() {
   if (prefix_file.size()){
-    std::cerr << prefix_file << std::endl;
-
+    // std::cerr << prefix_file << std::endl;
     read_prefix_file_(prefix_file);
   }
 }
@@ -52,7 +51,7 @@ operator()(StringPiece* rest) const {
   // keep track of where we started
   char const* snt_start = rest->data();
 
-  while (eos->Consume(rest, &snt, &prefix, &punct,&inipunct)){
+  while (eos->Consume(rest, &snt, &prefix, &punct, &inipunct)){
     // std::cout << "SNT: " << snt << std::endl;
     // std::cout << "PRE: " << prefix << std::endl;
     // std::cout << "INI: " << inipunct << std::endl;
@@ -77,27 +76,73 @@ operator()(StringPiece* rest) const {
 }
 
 SentenceStream::
-SentenceStream(std::string const& text, SentenceSplitter& splitter)
-  : rest_(text), splitter_(splitter) {
-
+SentenceStream(std::string const& text,
+               SentenceSplitter const& splitter,
+               splitmode const& mode)
+  : rest_(text),
+    mode_(mode),
+    splitter_(splitter),
+    line_pattern_("(.*?)$",UTF8().set_multiline(true)),
+    paragraph_pattern_("(.*?)(?:(?:\\r?\\n){2,}|$)",
+                       UTF8()
+                       .set_dotall(true)
+                       .set_dollar_endonly(true)){
+  // If sentence splitting is to be performed, get the first paragraph
+  if (mode == splitmode::one_paragraph_per_line){
+    line_pattern_.Consume(&rest_, &paragraph_);
+    // std::cerr << "P " << paragraph_ << std::endl;
+  }
+  else if (mode == splitmode::wrapped_text){
+    paragraph_pattern_.Consume(&rest_, &paragraph_);
+    // std::cerr << "p " << paragraph_ << std::endl;
+  }
 }
 
 bool
 SentenceStream::
-operator>>(std::string& snt){
-  StringPiece s;
-  (*this) >> s;
-  if (!s.data()) return false;
-  snt = std::string(s.data(),s.size());
-  return true;
+operator>>(StringPiece& snt){
+  // std::cerr << paragraph_.size() << " " << rest_.size() << std::endl;
+  if (paragraph_.size() == 0 && rest_.size() == 0){
+    return false;
+  }
+
+  if (mode_ == splitmode::one_sentence_per_line){
+    line_pattern_.Consume(&rest_, &snt);
+  }
+  else if (paragraph_.size() == 0){
+    // no more sentences in this paragraph; progress to the next line
+    snt = paragraph_; // we will return an empty string to indicate end of paragraph
+    if (mode_ == splitmode::one_paragraph_per_line){
+      if (!line_pattern_.Consume(&rest_, &paragraph_)){
+        paragraph_ = rest_;
+        rest_.clear();
+      }
+    }
+    else{ // wrapped text
+      if (!paragraph_pattern_.Consume(&rest_, &paragraph_)){
+        paragraph_ = rest_;
+        rest_.clear();
+      }
+      // std::cerr << "p " << paragraph_ << std::endl;
+    }
+  }
+  else{
+    snt = splitter_(&paragraph_);
+  }
+  return snt.data() != NULL;
 };
 
 bool
 SentenceStream::
-operator>>(StringPiece& snt){
-  if (!rest_.data()){ return false; }
-  snt = splitter_(&rest_);
-  return snt.data() != NULL;
+operator>>(std::string& snt){
+  static RE linebreak("[ \\t]*\\r*\\n[ \\t]*", UTF8().set_multiline(true));
+  StringPiece s;
+  (*this) >> s;
+  if (!s.data()) return false;
+  snt = std::string(s.data(),s.size());
+  if (mode_ == splitmode::wrapped_text)
+    linebreak.GlobalReplace(" ", &snt);
+  return true;
 };
 
 }}

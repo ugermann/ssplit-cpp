@@ -20,12 +20,15 @@ public:
 }; // end of class SentenceSplitter
 
 class SentenceStream{
+public:
   enum class splitmode { one_sentence_per_line, one_paragraph_per_line, wrapped_text };
-  pcrecpp::StringPiece rest_, current_;
+private:
+  pcrecpp::StringPiece rest_, paragraph_;
   splitmode mode_;
   SentenceSplitter const& splitter_;
+  pcrecpp::RE line_pattern_, paragraph_pattern_;
 public:
-  SentenceStream(std::string const& text, SentenceSplitter& splitter);
+  SentenceStream(std::string const& text, SentenceSplitter const& splitter, splitmode const& mode);
   bool operator>>(std::string& snt);
   bool operator>>(pcrecpp::StringPiece& snt);
 };

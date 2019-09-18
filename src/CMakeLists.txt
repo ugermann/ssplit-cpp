@@ -1,4 +1,5 @@
 include_directories(ssplit)
+include_directories(3rd-party/CLI11)
 
 add_library(ssplit STATIC ssplit/ssplit.cpp)
 set_target_properties(ssplit PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
