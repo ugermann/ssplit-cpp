@@ -8,7 +8,7 @@ using namespace pcrecpp;
 
 void
 SentenceSplitter::
-read_prefix_file_(std::string const& fname){
+load(std::string const& fname){
   using namespace std;
   RE pat("([^#].*)(?:[\\s]+(\\#NUMERIC_ONLY\\#))?", UTF8());
   ifstream pfile(fname);
@@ -37,8 +37,7 @@ SentenceSplitter::
 SentenceSplitter(std::string const& prefix_file)
   : SentenceSplitter() {
   if (prefix_file.size()){
-    // std::cerr << prefix_file << std::endl;
-    read_prefix_file_(prefix_file);
+    load(prefix_file);
   }
 }
 

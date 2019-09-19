@@ -8,11 +8,11 @@ namespace ug{
 namespace ssplit{
 class SentenceSplitter{
   std::unordered_map<std::string,int> prefix_type_;
-  void read_prefix_file_(std::string const& fname);
   std::unique_ptr<pcrecpp::RE> eos,abbrev,digits;
 public:
   SentenceSplitter();
   SentenceSplitter(std::string const& prefix_file);
+  void load(std::string const& fname);
 
   // Find next sentence boundary, return StringPiece for next sentence,
   // advance rest to reflect the rest of the text.
