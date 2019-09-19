@@ -12,3 +12,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(PCRECPP)
 add_subdirectory(src)
+
+# Check if this is a standalone compile (=>compile executables)
+# or an embedded compile (this directory was included via subdir)
+get_directory_property(hasParent PARENT_DIRECTORY)
+if(hasParent)
+  set(SPPLIT_STANDALONE_COMPILE off)
+else(hasParent)
+  set(SPPLIT_STANDALONE_COMPILE on)
+endif(hasParent)
