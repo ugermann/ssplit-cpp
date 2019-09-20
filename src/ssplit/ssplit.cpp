@@ -81,7 +81,7 @@ SentenceStream(std::string const& text,
   : rest_(text),
     mode_(mode),
     splitter_(splitter),
-    line_pattern_("(.*?)$",UTF8().set_multiline(true)),
+    line_pattern_("(.*?)(?:\n|$)",UTF8().set_multiline(true)),
     paragraph_pattern_("(.*?)(?:(?:\\r?\\n){2,}|$)",
                        UTF8()
                        .set_dotall(true)
@@ -122,13 +122,17 @@ operator>>(StringPiece& snt){
         paragraph_ = rest_;
         rest_.clear();
       }
-      // std::cerr << "p " << paragraph_ << std::endl;
     }
+    // std::cerr << "p " << paragraph_ << std::endl;
   }
   else{
     snt = splitter_(&paragraph_);
   }
-  return snt.data() != NULL;
+  // std::cerr << "s " << snt << std::endl;
+  // std::cerr << snt.size() << " "
+  //           << paragraph_.size() << " "
+  //           << rest_.size() << std::endl;
+  return true;
 };
 
 bool
@@ -136,8 +140,8 @@ SentenceStream::
 operator>>(std::string& snt){
   static RE linebreak("[ \\t]*\\r*\\n[ \\t]*", UTF8().set_multiline(true));
   StringPiece s;
-  (*this) >> s;
-  if (!s.data()) return false;
+  if (!((*this) >> s))
+    return false;
   snt = std::string(s.data(),s.size());
   if (mode_ == splitmode::wrapped_text)
     linebreak.GlobalReplace(" ", &snt);
