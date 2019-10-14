@@ -24,7 +24,7 @@ SentenceSplitter(){
   // End of sentence:
   RE_Options options = UTF8();
   options.set_multiline(true).set_dotall(true).set_dollar_endonly(true);
-  eos.reset(new RE("([^\\s].*?([^\\s]*?)([.?!]+)['\")\\]\\p{Pf}]*)(?:\\s+|$)"
+  eos.reset(new RE("\\s*([^\\s].*?([^\\s]*?)([.?!]+)['\")\\]\\p{Pf}]*)(?:\\s+|$)"
                    "(?=(['\"(\\[¿¡\\r\\n\\p{Pi}]*)[\\s]*\\p{Lu}|$)", options));
   // Abbreviations:
   abbrev.reset(new RE("(?:\\p{L}\\.)+\\p{L}",UTF8()));
