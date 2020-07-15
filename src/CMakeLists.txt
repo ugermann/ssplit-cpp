@@ -1,6 +1,6 @@
 include_directories(ssplit)
 add_library(ssplit STATIC ssplit/ssplit.cpp)
-target_link_libraries(ssplit pcrecpp pcre)
+target_link_libraries(ssplit ${EXT_LIBS})
 set_target_properties(ssplit PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
 set_target_properties(ssplit PROPERTIES ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
 
