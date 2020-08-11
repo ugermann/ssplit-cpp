@@ -2,6 +2,7 @@
 # and CMakeLists.txt from github.com/marian-nmt/marian-dev
 cmake_minimum_required (VERSION 3.5.1)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+set(CMAKE_BUILD_TYPE "Release")
 
 project (ssplit CXX)
 
@@ -21,4 +22,3 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(PCRECPP)
 add_subdirectory(src)
-
