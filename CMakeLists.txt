@@ -21,4 +21,11 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(PCRECPP)
+if(PCRECPP_FOUND)
+  include_directories(${PCRECPP_INCLUDE_DIRS})
+  set(EXT_LIBS ${EXT_LIBS} ${PCRECPP_LIBRARIES})
+else(PCRECPP_FOUND)
+  message(SEND_ERROR "Cannot find pcrecpp libraries. Terminating.")
+endif(PCRECPP_FOUND)
+
 add_subdirectory(src)
