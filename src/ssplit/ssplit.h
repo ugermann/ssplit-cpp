@@ -28,7 +28,7 @@ private:
   SentenceSplitter const& splitter_;
   pcrecpp::RE line_pattern_, paragraph_pattern_;
 public:
-  SentenceStream(std::string const& text, SentenceSplitter const& splitter, splitmode const& mode);
+  SentenceStream(pcrecpp::StringPiece const& text, SentenceSplitter const& splitter, splitmode const& mode);
   bool operator>>(std::string& snt);
   bool operator>>(pcrecpp::StringPiece& snt);
 };
