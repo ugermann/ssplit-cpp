@@ -75,7 +75,7 @@ operator()(StringPiece* rest) const {
 }
 
 SentenceStream::
-SentenceStream(std::string const& text,
+SentenceStream(StringPiece const& text,
                SentenceSplitter const& splitter,
                splitmode const& mode)
   : rest_(text),
