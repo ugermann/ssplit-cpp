@@ -8,7 +8,7 @@ namespace ug{
 namespace ssplit{
 class SentenceSplitter{
   std::unordered_map<std::string,int> prefix_type_;
-  std::unique_ptr<pcrecpp::RE> eos,abbrev,digits;
+
 public:
   SentenceSplitter();
   SentenceSplitter(std::string const& prefix_file);
@@ -23,12 +23,14 @@ class SentenceStream{
 public:
   enum class splitmode { one_sentence_per_line, one_paragraph_per_line, wrapped_text };
 private:
-  pcrecpp::StringPiece rest_, paragraph_;
+  char const* cursor_;
+  char const* const stop_;
+  pcrecpp::StringPiece paragraph_;
   splitmode mode_;
   SentenceSplitter const& splitter_;
-  pcrecpp::RE line_pattern_, paragraph_pattern_;
 public:
   SentenceStream(pcrecpp::StringPiece const& text, SentenceSplitter const& splitter, splitmode const& mode);
+  SentenceStream(char const* data, size_t datasize, SentenceSplitter const& splitter, splitmode const& mode);
   bool operator>>(std::string& snt);
   bool operator>>(pcrecpp::StringPiece& snt);
 };
