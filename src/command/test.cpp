@@ -38,7 +38,7 @@ int main(int argc, char const* argv[]) {
   bool oppl=false,testmode=false; // one paragraph per line
 
   CLI::App app{"Sentence Splitter"};
-  app.add_option("-f,--prefix-file", prefix_file, "Path to prefix file.")
+  app.add_option("-p,--prefix-file", prefix_file, "Path to prefix file.")
     ->check(CLI::ExistingFile);
   app.add_flag("-P,--oppl", oppl,
                "Input is one paragraph per line (default: wrapped text)");
