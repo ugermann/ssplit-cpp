@@ -12,7 +12,8 @@ load(std::string const& fname){
   using namespace std;
   RE pat("([^#].*)(?:[\\s]+(\\#NUMERIC_ONLY\\#))?", UTF8());
   ifstream pfile(fname);
-  string line, prefix, tag;
+  string line, tag;
+  string prefix;
   while (getline(pfile,line)){
     if (pat.FullMatch(line,&prefix,&tag))
       prefix_type_[prefix] = tag.empty() ? 1 : 2;
@@ -39,7 +40,8 @@ operator()(StringPiece* rest) const {
                 UTF8().set_multiline(true).set_dotall(true).set_dollar_endonly(true));
   static RE abbrev = RE("(?:\\p{L}\\.)+\\p{L}",UTF8());
   static RE digits = RE("^[\\p{Nd}\\p{Nl}]",UTF8());
-
+  static RE whitespace("\\s*", UTF8().set_multiline(true).set_dotall(true)
+                       .set_dollar_endonly(true));
   StringPiece snt, punct, inipunct;
   std::string prefix; // Defined as string because we need it for map lookup
 
@@ -65,11 +67,13 @@ operator()(StringPiece* rest) const {
     break;
   }
   if (!success){ // no sentence boundary detected
+    whitespace.Consume(rest);
     snt = *rest;
     rest->clear();
   }
   else {
     snt.set(snt_start, rest->data() - snt_start);
+    whitespace.Consume(rest);
   }
   return snt;
 }
