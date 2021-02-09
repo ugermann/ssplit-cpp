@@ -21,4 +21,4 @@ jobs:
         cmake ..
     - name: Compile
       working-directory: build
-      run: cmake --build . -j2 VERBOSE=1
+      run: make -j2 VERBOSE=1
