@@ -17,7 +17,7 @@ endif(hasParent)
 
 set(BUILD_ARCH x86-64)
 set(CMAKE_CXX_FLAGS "-std=c++11 -fPIC -march=${BUILD_ARCH} -O3")
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(PCRECPP)

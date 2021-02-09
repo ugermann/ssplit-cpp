@@ -4,24 +4,19 @@
 #include<unordered_map>
 // @TODO: check which C++ version we are using ...
 //        ... maybe use C17 standard types for C17 and upwards?
-#include "absl/strings/string_view.h"
-#include "absl/container/flat_hash_map.h"
+#include "typedefs.h"
 
 namespace ug{
 namespace ssplit{
 
-typedef absl::string_view string_view;
-typedef absl::flat_hash_map<std::string, int> prefix_map_t;
-
-
 class SentenceSplitter{
-  absl::flat_hash_map<std::string, int> prefix_type_;
+  prefix_map_t prefix_type_;
 
   // Return the prefix class of a prefix.
   // 0: not a prefix
   // 1: prefix
   // 2: prefix only in front of numbers
-  int get_prefix_class(absl::string_view piece) const;
+  int get_prefix_class(string_view piece) const;
 
 public:
   SentenceSplitter();

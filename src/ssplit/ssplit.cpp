@@ -21,7 +21,8 @@ load(std::string const& fname){
     if (pat.find(line, &M) > 0) {
       auto m1 = M[1];
       if (m1.size()) {
-        prefix_type_[M[1]] = M[2].size() ? 2 : 1;
+        std::string foo(m1.data(), m1.size());
+        prefix_type_[foo] = M[2].size() ? 2 : 1;
       }
     }
   }
@@ -94,7 +95,7 @@ get_prefix_class(string_view piece) const {
   if (foo.consume(&piece, &M, PCRE2_NO_UTF_CHECK) > 0) {
     piece = M[1];
   }
-  auto m = prefix_type_.find(piece);
+  auto m = prefix_type_.find(std::string_view(piece));
   // for debugging:
   // std::cout << piece << " " << (m == prefix_type_.end() ? 0 : m->second) << std::endl;
   return m == prefix_type_.end() ? 0 : m->second;

@@ -18,7 +18,7 @@ using splitmode=SentenceStream::splitmode;
 void ssplit_chunk(char const* data, size_t datasize,
                   SentenceSplitter const& ssplit,
                   splitmode const& mode_){
-  absl::string_view  snt;
+  string_view  snt;
   SentenceStream buf(data, datasize, ssplit, mode_);
   int linectr=0;
   while (buf >> snt)
@@ -69,7 +69,7 @@ int main(int argc, char const* argv[]) {
   fstat(fd,&sb);
   data = reinterpret_cast<char*>(mmap(NULL, sb.st_size, PROT_READ, MAP_PRIVATE, fd, 0));
 
-  absl::string_view DATA(data, sb.st_size);
+  std::string_view DATA(data, sb.st_size);
   ug::ssplit::SentenceSplitter ssplit(prefix_file);
   ssplit_chunk(data, sb.st_size, ssplit, mode);
   exit(0);

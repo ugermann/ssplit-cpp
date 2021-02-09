@@ -44,7 +44,7 @@ get_pcre2_code() const {
 
 int
 Regex::
-consume(absl::string_view* subj, // the string (view) agains we are matching
+consume(string_view* subj, // the string (view) agains we are matching
         Match* M,               // where to store the results of the match
         uint32_t options         // search options
         ) const {
@@ -57,7 +57,7 @@ consume(absl::string_view* subj, // the string (view) agains we are matching
 
 int
 Regex::
-find(absl::string_view subj, // the string (view) agains we are matching
+find(string_view subj, // the string (view) agains we are matching
      Match* M,               // where to store the results of the match
      size_t start,           // where to start searching in the string
      uint32_t options         // search options
@@ -96,12 +96,12 @@ Match::~Match() {
   pcre2_match_data_free(match_data);
 }
 
-absl::string_view
+string_view
 Match::
 operator[](int i) const {
   PCRE2_SIZE* o = pcre2_get_ovector_pointer(match_data);
   assert(i <= num_matched_groups);
   i <<= 1;
-  return absl::string_view(data+o[i], o[i+1] - o[i]);
+  return string_view(data+o[i], o[i+1] - o[i]);
 }
 }} // end of namespace

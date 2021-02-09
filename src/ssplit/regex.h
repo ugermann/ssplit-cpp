@@ -4,13 +4,12 @@
 
 #define PCRE2_CODE_UNIT_WIDTH 8
 #include <pcre2.h>
-#include "absl/strings/string_view.h"
-#include "absl/container/flat_hash_map.h"
+#include "typedefs.h"
+
 // inspired by https://github.com/luvit/pcre2/blob/master/src/pcre2demo.c
 
 namespace ug {
 namespace ssplit {
-#define PCRE2_CODE_UNIT_WIDTH 8
 
 class Match;
 
@@ -33,13 +32,13 @@ public:
         uint32_t options, // pcre2 options for regex compilation
         uint32_t jit_options = PCRE2_JIT_COMPLETE); // options for jit compilation
 
-  int find(absl::string_view subj, // the string (view) agains we are matching
+  int find(string_view subj, // the string (view) agains we are matching
            Match* M,               // where to store the results of the match
            size_t start = 0,       // where to start searching in the string
            uint32_t options=0      // search options
            ) const;
 
-  int consume(absl::string_view* subj, // the string (view) agains we are matching
+  int consume(string_view* subj, // the string (view) agains we are matching
               Match* M,               // where to store the results of the match
               uint32_t options=0      // search options
               ) const;
@@ -54,7 +53,7 @@ public:
   pcre2_match_data* const match_data; // stores matching offsets
   char const* data{nullptr};          // beginning of subject text span
   int num_matched_groups{0};
-  absl::string_view operator[](int i) const;
+  string_view operator[](int i) const;
   Match(pcre2_code const* re);
   Match(Regex const& re);
   ~Match();
