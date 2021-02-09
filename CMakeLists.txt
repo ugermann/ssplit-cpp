@@ -16,7 +16,7 @@ else(hasParent)
 endif(hasParent)
 
 set(BUILD_ARCH x86-64)
-set(CMAKE_CXX_FLAGS "-std=c++17 -fPIC -march=${BUILD_ARCH} -O3")
+set(CMAKE_CXX_FLAGS "-std=c++1z -fPIC -march=${BUILD_ARCH} -O3")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
