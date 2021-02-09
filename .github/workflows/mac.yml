@@ -13,7 +13,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Dependencies
-      run: brew install pcre
+      run: brew install pcre2
     - name: cmake
       run: |
         cmake -E make_directory build
