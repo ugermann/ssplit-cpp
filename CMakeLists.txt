@@ -6,6 +6,8 @@ set(CMAKE_BUILD_TYPE "Release")
 
 project (ssplit CXX)
 
+option(UPDATE_SUBMODULES "Check for changes in submodules" ON)
+
 # Check if this is a standalone compile (=>compile executables)
 # or an embedded compile (this directory was included via subdir)
 get_directory_property(hasParent PARENT_DIRECTORY)
@@ -20,7 +22,8 @@ set(CMAKE_CXX_FLAGS "-std=c++11 -fPIC -march=${BUILD_ARCH} -O3")
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(PCRECPP)
+include(UpdateSubmodules)
+
 find_package(PCRE2)
 if(PCRE2_FOUND)
   include_directories(${PCRE2_INCLUDE_DIRS} ${PCRECPP_INCLUD_DIRS})
