@@ -22,19 +22,19 @@ jobs:
     - name: Compile
       working-directory: build
       run: make -j2 VERBOSE=1
-    - name: "Test paragraph-per-line":
+    - name: "Test paragraph-per-line"
       run: |
           ./build/test_ssplit \
             -p nonbreaking_prefixes/nonbreaking_prefix.en \
             -i tests/sample.en \
             -m p -e tests/sample.en.one_paragraph_per_line.expected
-    - name: "Test one-sentence-per-line":
+    - name: "Test one-sentence-per-line"
       run: |
           ./build/test_ssplit \
             -p nonbreaking_prefixes/nonbreaking_prefix.en \
             -i tests/sample.en \
             -m s -e tests/sample.en.one_sentence_per_line.expected
-    - name: "Test wrapped-text":
+    - name: "Test wrapped-text"
       run: |
           ./build/test_ssplit \
             -p nonbreaking_prefixes/nonbreaking_prefix.en \
