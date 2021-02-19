@@ -24,18 +24,24 @@ option(USE_INTERNAL_PCRE2 "Uses internal PCRE2 instead of system PCRE2" OFF)
 
 if(USE_INTERNAL_PCRE2)
    # cmake .. -DPCRE2_BUILD_PCRE2_16=ON -DBUILD_SHARED_LIBS=ON
+   option(PCRE2_BUILD_PCRE2_16 "Enable PCRE216" ON)
+
+   set(PCRE2_VERSION "10.00")
+   set(PCRE2_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/3rd-party/pcre2")
 
    if(NOT EXISTS src/3rd-party/pcre2)
-       message("Downloading PCRE2 into src/3rd-party/pcre2")
+       message("Downloading pcre2-${PCRE2_VERSION} into ${PCRE2_SOURCE_DIR}")
+       set(PCRE2_DOWNLOAD_URL "https://ftp.pcre.org/pub/pcre/pcre2-${PCRE2_VERSION}.tar.bz2")
        file(DOWNLOAD
-           https://ftp.pcre.org/pub/pcre/pcre2-10.00.tar.bz2  # URL
-           ${CMAKE_BINARY_DIR}/pcre2.tar.bz2 # FILE
+           ${PCRE2_DOWNLOAD_URL} # URL
+           "${CMAKE_BINARY_DIR}/pcre2.tar.bz2" # FILE
         )
-       file(ARCHIVE_EXTRACT INPUT pcre2.tar.bz2 DESTINATION ${CMAKE_BINARY_DIR})
+    file(ARCHIVE_EXTRACT INPUT "${CMAKE_BINARY_DIR}/pcre2.tar.bz2" DESTINATION ${CMAKE_BINARY_DIR})
+    message("mv ${CMAKE_BINARY_DIR}/pcre2-${PCRE2_VERSION} ${PCRE2_SOURCE_DIR}")
+    file(RENAME "${CMAKE_BINARY_DIR}/pcre2-${PCRE2_VERSION}" "${PCRE2_SOURCE_DIR}")
    endif()
 
-   option(PCRE2_BUILD_PCRE2_16 "Enable PCRE216" ON)
-   add_subdirectory(src/3rd-party/pcre2)
+   add_subdirectory(${PCRE2_SOURCE_DIR})
    set(EXT_LIBS ${EXT_LIBS} pcre2-8 pcre2-16)
    message(EXT_LIBS ${EXT_LIBS})
 else(USE_INTERNAL_PCRE2)
