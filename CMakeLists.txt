@@ -43,6 +43,7 @@ if(USE_INTERNAL_PCRE2)
 
    add_subdirectory(${PCRE2_SOURCE_DIR})
    set(EXT_LIBS ${EXT_LIBS} pcre2-8 pcre2-16)
+   include_directories(${CMAKE_BINARY_DIR}/src/3rd-party/pcre2)
    message(EXT_LIBS ${EXT_LIBS})
 else(USE_INTERNAL_PCRE2)
     find_package(PCRE2)
