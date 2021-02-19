@@ -34,16 +34,16 @@ if(USE_INTERNAL_PCRE2)
        set(PCRE2_DOWNLOAD_URL "https://ftp.pcre.org/pub/pcre/pcre2-${PCRE2_VERSION}.tar.bz2")
        file(DOWNLOAD
            ${PCRE2_DOWNLOAD_URL} # URL
-           "${CMAKE_BINARY_DIR}/pcre2.tar.bz2" # FILE
+           "${CMAKE_CURRENT_BINARY_DIR}/pcre2.tar.bz2" # FILE
         )
-    file(ARCHIVE_EXTRACT INPUT "${CMAKE_BINARY_DIR}/pcre2.tar.bz2" DESTINATION ${CMAKE_BINARY_DIR})
-    message("mv ${CMAKE_BINARY_DIR}/pcre2-${PCRE2_VERSION} ${PCRE2_SOURCE_DIR}")
-    file(RENAME "${CMAKE_BINARY_DIR}/pcre2-${PCRE2_VERSION}" "${PCRE2_SOURCE_DIR}")
+    file(ARCHIVE_EXTRACT INPUT "${CMAKE_CURRENT_BINARY_DIR}/pcre2.tar.bz2" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+    message("mv ${CMAKE_CURRENT_BINARY_DIR}/pcre2-${PCRE2_VERSION} ${PCRE2_SOURCE_DIR}")
+    file(RENAME "${CMAKE_CURRENT_BINARY_DIR}/pcre2-${PCRE2_VERSION}" "${PCRE2_SOURCE_DIR}")
    endif()
 
    add_subdirectory(${PCRE2_SOURCE_DIR})
    set(EXT_LIBS ${EXT_LIBS} pcre2-8 pcre2-16)
-   include_directories(${CMAKE_BINARY_DIR}/src/3rd-party/pcre2)
+   include_directories(${CMAKE_CURRENT_BINARY_DIR}/src/3rd-party/pcre2)
    message(EXT_LIBS ${EXT_LIBS})
 else(USE_INTERNAL_PCRE2)
     find_package(PCRE2)
