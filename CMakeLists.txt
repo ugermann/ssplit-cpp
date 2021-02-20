@@ -6,6 +6,8 @@ set(CMAKE_BUILD_TYPE "Release")
 
 project (ssplit CXX)
 
+option(USE_INTERNAL_PCRE2 "Use internal PCRE2 instead of system PCRE2" OFF)
+
 # Check if this is a standalone compile (=>compile executables)
 # or an embedded compile (this directory was included via subdir)
 get_directory_property(hasParent PARENT_DIRECTORY)
@@ -19,8 +21,6 @@ set(CMAKE_CXX_FLAGS "-fPIC -O3")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_FIND_LIBRARY_SUFFIXES .a)
-option(USE_INTERNAL_PCRE2 "Use internal PCRE2 instead of system PCRE2"
-  ON)
 
 if(USE_INTERNAL_PCRE2)
   include(ExternalProject)
@@ -36,7 +36,7 @@ if(USE_INTERNAL_PCRE2)
   # but allows us to wipe the build dir without having to
   # re-download pcre2 so often. Git has been instructed to ignore
   # ${PCRE2_SRC_DIR} via .gitignore.
-  if (NOT ${PCRE2_SRC_DIR}/configure)
+  if (EXISTS ${PCRE2_SRC_DIR}/configure)
     set(PCRE2_URL "")
   else()
     set(PCRE2_URL "https://ftp.pcre.org/pub/pcre/${PCRE2_TARBALL}")
@@ -54,6 +54,8 @@ if(USE_INTERNAL_PCRE2)
     --prefix=${CMAKE_CURRENT_BINARY_DIR}
     ${PCRE2_JIT_OPTION}
     )
+
+  message("Downloading pcre2 source code from ${PCRE2_URL}")
 
   ExternalProject_Add(libpcre2
     PREFIX ${CMAKE_CURRENT_BINARY_DIR}/pcre2
