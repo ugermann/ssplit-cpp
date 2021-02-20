@@ -1,6 +1,5 @@
 // Test program that memory-maps a file and splits it into sentences.
 // Written primarily to test one_sentence_per_line mode.
-#include <pcrecpp.h>
 #include <stdio.h>
 #include <string>
 #include <stdlib.h>
