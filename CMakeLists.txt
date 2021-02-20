@@ -15,7 +15,6 @@ else(hasParent)
   set(SSPLIT_STANDALONE_COMPILE on)
 endif(hasParent)
 
-# set(BUILD_ARCH x86-64)
 set(CMAKE_CXX_FLAGS "-fPIC -O3")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -23,9 +22,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 option(USE_INTERNAL_PCRE2 "Uses internal PCRE2 instead of system PCRE2" OFF)
 
 if(USE_INTERNAL_PCRE2)
-   # cmake .. -DPCRE2_BUILD_PCRE2_16=ON -DBUILD_SHARED_LIBS=ON
-   option(PCRE2_BUILD_PCRE2_16 "Enable PCRE2-16" ON)
-
    set(PCRE2_VERSION "10.00")
    set(PCRE2_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/3rd-party/pcre2")
 
@@ -37,24 +33,22 @@ if(USE_INTERNAL_PCRE2)
            "${CMAKE_CURRENT_BINARY_DIR}/pcre2.tar.bz2" # FILE
         )
     file(ARCHIVE_EXTRACT INPUT "${CMAKE_CURRENT_BINARY_DIR}/pcre2.tar.bz2" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-    message("mv ${CMAKE_CURRENT_BINARY_DIR}/pcre2-${PCRE2_VERSION} ${PCRE2_SOURCE_DIR}")
     file(RENAME "${CMAKE_CURRENT_BINARY_DIR}/pcre2-${PCRE2_VERSION}" "${PCRE2_SOURCE_DIR}")
    endif()
 
    add_subdirectory(${PCRE2_SOURCE_DIR})
-   set(EXT_LIBS ${EXT_LIBS} pcre2-8 pcre2-16)
+   set(EXT_LIBS ${EXT_LIBS} pcre2-8)
    include_directories(${CMAKE_CURRENT_BINARY_DIR}/src/3rd-party/pcre2)
-   message(EXT_LIBS ${EXT_LIBS})
 else(USE_INTERNAL_PCRE2)
     find_package(PCRE2)
     if(PCRE2_FOUND)
       include_directories(${PCRE2_INCLUDE_DIRS})
       set(EXT_LIBS ${EXT_LIBS} ${PCRE2_LIBRARIES})
+      message("Using PCRECPP: ${PCRE2_LIBRARIES}")
     else(PCRE2_FOUND)
       message(SEND_ERROR "Cannot find pcrecpp libraries. Terminating.")
     endif(PCRE2_FOUND)
 endif(USE_INTERNAL_PCRE2)
 
-message("Using PCRECPP: ${PCRE2_LIBRARIES}")
 add_subdirectory(src)
 
