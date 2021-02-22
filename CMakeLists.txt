@@ -28,7 +28,7 @@ if(USE_INTERNAL_PCRE2)
   set(PCRE2_VERSION "10.36")
   set(PCRE2_TARBALL "pcre2-${PCRE2_VERSION}.tar.gz")
   set(PCRE2_SRC_DIR
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/3rd_party/pcre2-${PCRE2_VERSION})
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/3rd-party/pcre2-${PCRE2_VERSION})
 
   # Download tarball only if we don't have the pcre2 source code yet.
   # For the time being, we download and unpack pcre2 into
