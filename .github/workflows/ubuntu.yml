@@ -22,21 +22,18 @@ jobs:
     - name: Compile
       working-directory: build
       run: cmake --build . -j2
-    - name: "Test paragraph-per-line"
+    - name: "Test one-paragraph-per-line"
       run: |
-          ./build/test_ssplit \
-            -p nonbreaking_prefixes/nonbreaking_prefix.en \
-            -i tests/sample.en \
-            -m p -e tests/sample.en.one_paragraph_per_line.expected
+           diff -qa <(./build/ssplit -mp -n \
+           -p nonbreaking_prefixes/nonbreaking_prefix.en \
+           tests/sample.en) tests/sample.en.mp.n.expected
     - name: "Test one-sentence-per-line"
       run: |
-          ./build/test_ssplit \
-            -p nonbreaking_prefixes/nonbreaking_prefix.en \
-            -i tests/sample.en \
-            -m s -e tests/sample.en.one_sentence_per_line.expected
+          diff -qa <(./build/ssplit -ms -n \
+          -p nonbreaking_prefixes/nonbreaking_prefix.en \
+          tests/sample.en) tests/sample.en.ms.n.expected
     - name: "Test wrapped-text"
       run: |
-          ./build/test_ssplit \
-            -p nonbreaking_prefixes/nonbreaking_prefix.en \
-            -i tests/sample.en.wrapped \
-            -m w -e tests/sample.en.wrapped.expected
+          diff -qa <(./build/ssplit -mw -n \
+          -p nonbreaking_prefixes/nonbreaking_prefix.en \
+          tests/sample.en.wrapped) tests/sample.en.wrapped.mw.n.expected
