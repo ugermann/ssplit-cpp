@@ -71,14 +71,18 @@ public:
 // replacing line breaks by blanks. This is faster than doing a
 // global replacement in a string first.
 std::ostream&
-single_line(std::ostream& out,          // destination stream
-            string_view span,     // text span to be printed in a single line
+single_line(std::ostream& out, // destination stream
+            string_view span, // text span to be printed in a single line
+            string_view end = "", // stuff to put at end of line
             bool validate_utf = false); // do we need to validate UTF8?
 
 // Auxiliary function to stiore a chunk of text as a single line,
 // replacing line breaks by blanks.
 std::string&
-single_line(std::string& snt,          // destination stream
-            string_view span,     // text span to be printed in a single line
+single_line(std::string& snt, // destination stream
+            string_view span, // text span to be printed in a single line
+            string_view end = "", // stuff to put at end of line
             bool validate_utf = false); // do we need to validate UTF8?
+
+
 }}// end of namespaces

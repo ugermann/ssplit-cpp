@@ -46,9 +46,10 @@ SentenceSplitter(std::string const& prefix_file)
 // replacing line breaks by blanks. This is faster than doing a
 // global replacement in a string first.
 std::ostream&
-single_line(std::ostream& out,      // destination stream
-            string_view span, // text span to be printed in a single line
-            bool validate_utf) {    // do we need to validate UTF8?
+single_line(std::ostream& out,   // destination stream
+            string_view span,    // text span to be printed in a single line
+            string_view end,     // stuff to put at end of line
+            bool validate_utf) { // do we need to validate UTF8?
   static Regex P("^\\s*(.*)\\R+\\s*", PCRE2_UTF);
   thread_local static Match M(P);
   int success = P.consume(&span, &M, validate_utf ? 0 : PCRE2_NO_UTF_CHECK);
@@ -59,15 +60,17 @@ single_line(std::ostream& out,      // destination stream
     success = P.consume(&span, &M, PCRE2_NO_UTF_CHECK);
   }
   out.write(span.data(), span.size());
+  out.write(end.data(), end.size());
   return out;
 }
 
 // Auxiliary function to stiore a chunk of text as a single line in a string,
 // replacing line breaks by blanks.
 std::string&
-single_line(std::string& snt,      // destination stream
-            string_view span, // text span to be printed in a single line
-            bool validate_utf) {    // do we need to validate UTF8?
+single_line(std::string& snt,    // destination stream
+            string_view span,    // text span to be printed in a single line
+            string_view end,     // stuff to put at end of line
+            bool validate_utf) { // do we need to validate UTF8?
   static Regex P("^\\s*(.*)\\R+\\s*", PCRE2_UTF);
   thread_local static Match M(P);
   int success = P.consume(&span, &M, validate_utf ? 0 : PCRE2_NO_UTF_CHECK);
@@ -80,6 +83,7 @@ single_line(std::string& snt,      // destination stream
     success = P.consume(&span, &M, PCRE2_NO_UTF_CHECK);
   }
   snt.append(span.data(), span.size());
+  snt.append(end.data(), end.size());
   return snt;
 }
 
@@ -345,7 +349,7 @@ operator>>(std::string& snt){
   string_view s;
   if (!((*this) >> s))
     return false;
-  single_line(snt, s, false);
+  single_line(snt, s, "", false);
   return true;
 };
 
