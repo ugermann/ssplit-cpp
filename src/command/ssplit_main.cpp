@@ -134,6 +134,9 @@ int main(int argc, char const* argv[]) {
   std::string modespec {"w"}; // split mode specficication
   std::string input_file;     // file to ssplit (cannot be compressed)
   CLI::App app{"Sentence Splitter"};
+  app.footer("\nIf no input file is given, ssplit reads from stdin. "
+             "Input files are memory-mapped (decompression is NOT supported!) "
+             "for faster processing.\n");
   app.add_option("input", input_file, "input file.")
     ->check(CLI::ExistingFile);
   app.add_option("-m,--mode", modespec,
