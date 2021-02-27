@@ -33,7 +33,7 @@ void ssplit_chunk(SentenceSplitter const& ssplit, string_view data) {
   else {
     uint firstpar = parctr; // first paragraph in this function call
     while (buf >> snt) {
-      if (linectr == 0) { // beginning of paragraph
+      if (linectr == 1) { // beginning of paragraph
         if (parctr > firstpar) {
           printf("\n"); // mark paragraph boundary
         }
@@ -60,7 +60,7 @@ void ssplit_chunk(SentenceSplitter const& ssplit, string_view data) {
         }
       }
       else {
-        linectr = 0;
+        linectr = 1;
         ++parctr;
       }
     }
@@ -106,7 +106,12 @@ void ssplit_stream(std::istream& in, SentenceSplitter const& ssplit) {
       if (parctr > 1) { // not the first paragraph
         printf("\n");
       }
-      ssplit_chunk(ssplit, chunk);
+      if (chunk.size()) {
+        ssplit_chunk(ssplit, chunk);
+      }
+      else {
+        printf("%u.1\n", parctr); // output the empty paragraph
+      }
       ++parctr;
     }
   }
@@ -134,9 +139,6 @@ int main(int argc, char const* argv[]) {
   std::string modespec {"w"}; // split mode specficication
   std::string input_file;     // file to ssplit (cannot be compressed)
   CLI::App app{"Sentence Splitter"};
-  app.footer("\nIf no input file is given, ssplit reads from stdin. "
-             "Input files are memory-mapped (decompression is NOT supported!) "
-             "for faster processing.\n");
   app.add_option("input", input_file, "input file.")
     ->check(CLI::ExistingFile);
   app.add_option("-m,--mode", modespec,
@@ -144,11 +146,24 @@ int main(int argc, char const* argv[]) {
                  "w (wrapped text).", "w")
     ->default_str(modespec)
     ->check(CLI::IsMember({"w","s","p"}));
-  app.add_flag("-n, --with-line-numbers", with_line_numbers,
+  app.add_flag("-n, --number-sentences", with_line_numbers,
                "print paragraph and line numbers (for debugging)");
   app.add_option("-p,--prefix-file", prefix_file,
                  "File with nonbreaking prefixes.")
     ->check(CLI::ExistingFile);
+
+  app.footer("\nIf no input file is given, ssplit reads from stdin. "
+             "Input files are memory-mapped (decompression is NOT supported!) "
+             "for faster processing.\n\n"
+             "SPLIT MODES AND OUTPUT FORMAT:\n"
+             "- Output is always one sentence per line.\n"
+             "- For mode 'p' and 'w', paragraphs are separated by empty lines in the output.\n"
+             "- With -n, each sentence is prefixed by a sentence number:\n"
+             "  - running paragraph number and sentence number within sentences for paragraphs\n"
+             "  - just the running sentence number for one-sentence-per-line\n"
+             "- One sentence/paragraph per line (i.e, -ms -mp) consider empty lines in the input\n"
+             "  separate sentences/paragraphs of length 0 (and will count them):\n"
+             "- In 'wrapped text' input format, one or more empty lines mark paragraph boundaries.\n");
 
   CLI11_PARSE(app, argc, argv);
 
