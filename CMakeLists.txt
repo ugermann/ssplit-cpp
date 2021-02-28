@@ -6,7 +6,7 @@ set(CMAKE_BUILD_TYPE "Release")
 
 project (ssplit CXX)
 
-option(USE_INTERNAL_PCRE2 "Use internal PCRE2 instead of system PCRE2" ON)
+option(USE_INTERNAL_PCRE2 "Use internal PCRE2 instead of system PCRE2" OFF)
 
 # Check if this is a standalone compile (=>compile executables)
 # or an embedded compile (this directory was included via subdir)
