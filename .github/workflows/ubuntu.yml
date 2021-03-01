@@ -1,0 +1,54 @@
+name: Ubuntu
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Dependencies
+      run: sudo apt-get install libpcre++-dev
+    - name: cmake
+      run: |
+        cmake -E make_directory build
+        cd build
+        cmake ..
+    - name: Compile
+      working-directory: build
+      run: cmake --build . -j2
+    - name: "Test one-paragraph-per-line (mapped)"
+      run: |
+           diff -qa <(./build/ssplit -mp -n \
+           -p nonbreaking_prefixes/nonbreaking_prefix.en \
+           tests/sample.en) tests/sample.en.mp.n.expected
+    - name: "Test one-paragraph-per-line (streamed)"
+      run: |
+           diff -qa <(./build/ssplit -mp -n \
+           -p nonbreaking_prefixes/nonbreaking_prefix.en \
+           < tests/sample.en) tests/sample.en.mp.n.expected
+    - name: "Test one-sentence-per-line (mapped)"
+      run: |
+          diff -qa <(./build/ssplit -ms -n \
+          -p nonbreaking_prefixes/nonbreaking_prefix.en \
+          tests/sample.en) tests/sample.en.ms.n.expected
+    - name: "Test one-sentence-per-line (streamed)"
+      run: |
+          diff -qa <(./build/ssplit -ms -n \
+          -p nonbreaking_prefixes/nonbreaking_prefix.en \
+          < tests/sample.en) tests/sample.en.ms.n.expected
+    - name: "Test wrapped-text (mapped)"
+      run: |
+          diff -qa <(./build/ssplit -mw -n \
+          -p nonbreaking_prefixes/nonbreaking_prefix.en \
+          tests/sample.en.wrapped) tests/sample.en.wrapped.mw.n.expected
+    - name: "Test wrapped-text (streamed)"
+      run: |
+          diff -qa <(./build/ssplit -mw -n \
+          -p nonbreaking_prefixes/nonbreaking_prefix.en \
+          < tests/sample.en.wrapped) tests/sample.en.wrapped.mw.n.expected
