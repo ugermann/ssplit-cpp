@@ -4,3 +4,4 @@
 
 # Obtained by CMake, prevent from git includes
 src/3rd-party/pcre2-*
+src/3rd-party/abseil-cpp
