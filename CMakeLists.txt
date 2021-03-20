@@ -34,7 +34,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -O3")
 
 if (USE_ABSEIL)
   include(ProvideAbseil)
-  add_definitions(-DUSE_ABSEIL)
   set(EXT_LIBS ${EXT_LIBS} ${ABSEIL_LIBS})
 endif(USE_ABSEIL)
 
