@@ -17,7 +17,7 @@ endif()
 option(USE_CXX11 "Restrict to c++-11" OFF)
 option(USE_INTERNAL_PCRE2 "Use internal PCRE2 instead of system PCRE2" OFF)
 option(USE_ABSEIL "Use the abseil library (works with C++11)." OFF)
-option(COMPILE_LIBRARY_ONLY "Compile library only" OFF)
+option(COMPILE_SSPLIT_LIBRARY_ONLY "Compile library only" OFF)
 
 # Handle CMake Standards
 if (USE_CXX11)
