@@ -13,15 +13,24 @@ option(USE_INTERNAL_PCRE2 "Use internal PCRE2 instead of system PCRE2" OFF)
 option(USE_ABSEIL "Use the abseil library (works with C++11)." OFF)
 message("COMPILING WITH ABSEIL ${USE_ABSEIL}")
 
-if(COMPILER_SUPPORTS_CXX17)
-  # With C++17, we don't need abseil.
-  message("COMPILER SUPPORTS C++17")
-  set(CMAKE_CXX_STANDARD 17)
-else(COMPILER_SUPPORTS_CXX17)
+option(USE_CXX14, "Restrict to CPP-14" OFF)
+
+
+if(USE_CXX14)
   set(CMAKE_CXX_STANDARD 11)
   # With C++11, abseil is necessary, because std::string_view is not supported.
   set(USE_ABSEIL ON)
-endif(COMPILER_SUPPORTS_CXX17)
+else(USE_CXX14)
+  if(COMPILER_SUPPORTS_CXX17)
+    # With C++17, we don't need abseil.
+    message("COMPILER SUPPORTS C++17")
+    set(CMAKE_CXX_STANDARD 17)
+  else(COMPILER_SUPPORTS_CXX17)
+    set(CMAKE_CXX_STANDARD 11)
+    # With C++11, abseil is necessary, because std::string_view is not supported.
+    set(USE_ABSEIL ON)
+  endif(COMPILER_SUPPORTS_CXX17)
+endif(USE_CXX14)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -O3")
 message("CMAKE_CXX_STANDARD is ${CMAKE_CXX_STANDARD}")
