@@ -24,6 +24,7 @@ set(USE_CXX_11 ${SSPLIT_USE_CXX11})
 set(USE_INTERNAL_PCRE2 ${SSPLIT_USE_INTERNAL_PCRE2})
 set(COMPILE_LIBRARY_ONLY ${SSPLIT_COMPILE_LIBRARY_ONLY})
 set(USE_ABSEIL OFF) # Default USE_ABSEIL explicitly turned OFF
+set(EXT_LIBS "") # Initialize EXT_LIBS with a legal value.
 
 # Handle C++ Standards
 if (USE_CXX11)
