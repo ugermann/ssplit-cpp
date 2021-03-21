@@ -15,6 +15,6 @@ typedef absl::string_view string_view;
 typedef std::string_view string_view;
 #endif  //  USE_ABSEIL
 
-typedef std::map<std::string, int, std::less<> > prefix_map_t;
+typedef std::map<std::string, int> prefix_map_t;
 }  // namespace ssplit
 }  // namespace ug
