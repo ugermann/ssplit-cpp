@@ -20,7 +20,7 @@ option(SSPLIT_USE_INTERNAL_PCRE2 "Use internal PCRE2 instead of system PCRE2" OF
 option(SSPLIT_COMPILE_LIBRARY_ONLY "Compile library only" OFF)
 
 # Make SSPLIT_ prefixed option local.
-set(USE_CXX_11 ${SSPLIT_USE_CXX11})
+set(USE_CXX11 ${SSPLIT_USE_CXX11})
 set(USE_INTERNAL_PCRE2 ${SSPLIT_USE_INTERNAL_PCRE2})
 set(COMPILE_LIBRARY_ONLY ${SSPLIT_COMPILE_LIBRARY_ONLY})
 set(USE_ABSEIL OFF) # Default USE_ABSEIL explicitly turned OFF
