@@ -6,36 +6,49 @@ set(CMAKE_BUILD_TYPE "Release")
 
 project (ssplit CXX)
 
-# Default is C++17, check if compiler supports, else hard-fail
+# Default is C++17, check if compiler supports, else hard-fail asking user to explicitly mention C++-11
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-std=c++17" COMPILER_SUPPORTS_CXX17)
 if(NOT COMPILER_SUPPORTS_CXX17 AND NOT USE_CXX11)
-   message(SEND_ERROR "Please enable -DUSE_CXX11=on as compiler does not support C++17")
+    message(SEND_ERROR "Please enable -DUSE_CXX11=on as compiler does not support C++17." 
+                       "This will enable abseil-cpp library")
 endif()
 
 
-option(USE_CXX11 "Restrict to c++-11" OFF)
-option(USE_INTERNAL_PCRE2 "Use internal PCRE2 instead of system PCRE2" OFF)
-option(USE_ABSEIL "Use the abseil library (works with C++11)." OFF)
-option(COMPILE_SSPLIT_LIBRARY_ONLY "Compile library only" OFF)
+option(SSPLIT_USE_CXX11 "Restrict to C++-11, enabes abseil string-view" OFF)
+option(SSPLIT_USE_INTERNAL_PCRE2 "Use internal PCRE2 instead of system PCRE2" OFF)
+option(SSPLIT_COMPILE_LIBRARY_ONLY "Compile library only" OFF)
 
-# Handle CMake Standards
+# Make SSPLIT_ prefixed option local.
+set(USE_CXX_11 ${SSPLIT_USE_CXX11})
+set(USE_INTERNAL_PCRE2 ${SSPLIT_USE_INTERNAL_PCRE2})
+set(COMPILE_LIBRARY_ONLY ${SSPLIT_COMPILE_LIBRARY_ONLY})
+
+# Handle C++ Standards
 if (USE_CXX11)
   set(CMAKE_CXX_STANDARD 11)
+
+  # If CXX11, abseil-cpp has to be enabled and added to EXT_LIBS, since there's
+  # no way to obtain string_view (required) without.
   set(USE_ABSEIL ON)
+  include(ProvideAbseil)
+  set(EXT_LIBS ${EXT_LIBS} ${ABSEIL_LIBS})
+
+  # The source files are imported in the library above. If included as a
+  # subdirectory, we would want this definition to stick for future includes as
+  # well. Hence add_definitions here.
+  add_definitions(-DUSE_ABSEIL)
 else(USE_CXX11)
   set(CMAKE_CXX_STANDARD 17)
 endif(USE_CXX11)
+
+# Enforce the standard set above.
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 set(CMAKE_FIND_LIBRARY_SUFFIXES .a)
 
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -O3")
-
-if (USE_ABSEIL)
-  include(ProvideAbseil)
-  set(EXT_LIBS ${EXT_LIBS} ${ABSEIL_LIBS})
-endif(USE_ABSEIL)
 
 include(FindPCRE2)
 if(PCRE2_FOUND)
