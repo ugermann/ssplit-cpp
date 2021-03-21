@@ -89,8 +89,8 @@ int SentenceSplitter::get_prefix_class(string_view piece) const {
   if(foo.consume(&piece, &M, PCRE2_NO_UTF_CHECK) > 0) {
     piece = M[1];
   }
-  std::string key = piece;
-  auto m          = prefix_type_.find(key);
+  std::string key(piece.data(), piece.size());
+  auto m = prefix_type_.find(key);
   // for debugging:
   // std::cout << piece << " " << (m == prefix_type_.end() ? 0 : m->second) << std::endl;
   return m == prefix_type_.end() ? 0 : m->second;
