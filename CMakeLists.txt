@@ -34,7 +34,7 @@ if (USE_CXX11)
   # no way to obtain string_view (required) without.
   set(USE_ABSEIL ON)
   include(ProvideAbseil)
-  set(EXT_LIBS ${EXT_LIBS} ${ABSEIL_LIBS})
+  set(EXT_LIBS ${EXT_LIBS} -Wl,--start-group ${ABSEIL_LIBS} -Wl,--end-group)
 
   # The source files are imported in the library above. If included as a
   # subdirectory, we would want this definition to stick for future includes as

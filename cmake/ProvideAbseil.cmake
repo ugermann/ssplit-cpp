@@ -25,10 +25,9 @@ ExternalProject_Add(abseil
   "-DCMAKE_CXX_FLAGS='${ABSEIL_CMAKE_ARGS_FOR_WASM}'")
 
 include_directories(${CMAKE_BINARY_DIR}/include)
-foreach(alib base city strings hash raw_hash_set)
+foreach(alib base throw_delegate city strings hash raw_hash_set)
   string(CONCAT alibfull
     "${CMAKE_BINARY_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}"
     "absl_${alib}${CMAKE_STATIC_LIBRARY_SUFFIX}")
-  message("LIBRARY: ${alibfull}")
   set(ABSEIL_LIBS ${ABSEIL_LIBS} ${alibfull})
 endforeach()
