@@ -1,31 +1,31 @@
-# based on https://cmake.org/cmake-tutorial/
-# and CMakeLists.txt from github.com/marian-nmt/marian-dev
 cmake_minimum_required (VERSION 3.5.1)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 set(CMAKE_BUILD_TYPE "Release")
 
 project (ssplit CXX)
-include(CheckCXXCompilerFlag)
-CHECK_CXX_COMPILER_FLAG("-std=c++17" COMPILER_SUPPORTS_CXX17)
-CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
+# ssplit-cpp depends on the pcre2 library and some version of string_view
+# that is compatible with std::string_view in c++17.
+# If cmake and the compiler support c++17, we use std::string_view.
+# If not, we download and compile the abseil libraries and use those.
+# If pcre2 is available system-wide (including header files), we use that.
+# if not, we download and compile.
+# By default, either of the two 3rd-party resources are custom-built only
+# when necessary. The two options below allow us to force their use for
+# testing purposes.
+option(USE_ABSEIL "Force use of the abseil library (works with C++11)." OFF)
+option(USE_INTERNAL_PCRE2 "Force use internal PCRE2 instead of system PCRE2" OFF)
 
-option(USE_INTERNAL_PCRE2 "Use internal PCRE2 instead of system PCRE2" OFF)
-option(USE_ABSEIL "Use the abseil library (works with C++11)." OFF)
-message("COMPILING WITH ABSEIL ${USE_ABSEIL}")
-
-if(COMPILER_SUPPORTS_CXX17)
-  # With C++17, we don't need abseil.
-  message("COMPILER SUPPORTS C++17")
-  set(CMAKE_CXX_STANDARD 17)
-else(COMPILER_SUPPORTS_CXX17)
+# Does the current version of cmake supports C++17?
+list(FIND CMAKE_CXX_COMPILE_FEATURES cxx_std_17 CMAKE_SUPPORTS_CXX17)
+if (${CMAKE_SUPPORTS_CXX17} EQUAL -1) # No, it doesn't.
+  # C++-17 is not available
+  set(USE_ABSEIL TRUE CACHE BOOL "Force abseil" FORCE)
   set(CMAKE_CXX_STANDARD 11)
-  # With C++11, abseil is necessary, because std::string_view is not supported.
-  set(USE_ABSEIL ON)
-endif(COMPILER_SUPPORTS_CXX17)
-
+else()                                # Yes, it does.
+  set(CMAKE_CXX_STANDARD 17)
+endif()
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -O3")
-message("CMAKE_CXX_STANDARD is ${CMAKE_CXX_STANDARD}")
-
 if (USE_ABSEIL)
   message("COMPILING WITH ABSEIL ${USE_ABSEIL}")
   include(ProvideAbseil)
@@ -44,14 +44,20 @@ endif(hasParent)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_FIND_LIBRARY_SUFFIXES .a)
 
-include(FindPCRE2)
+# Make sure we have pcre2 (through system or custom download and build).
+# Seee cmake/ProvidePCRE2.cmake.
+include(ProvidePCRE2)
 if(PCRE2_FOUND)
   include_directories(${PCRE2_INCLUDE_DIRS})
-  set(EXT_LIBS ${EXT_LIBS} ${PCRE2_LIBRARIES})
-  message("   Using these libraries: ${EXT_LIBS}")
+  set(EXT_LIBS ${EXT_LIBS} ${PCRE2_LIBRARIES} ${ABSEIL_LIBS})
 else(PCRE2_FOUND)
-  message(SEND_ERROR "Cannot find pcrecpp libraries. Terminating.")
+  message(FATAL_ERROR "Cannot find pcrecpp libraries. Terminating.")
 endif(PCRE2_FOUND)
+message("   Using these libraries:")
+foreach(lib ${EXT_LIBS})
+  message("    - ${lib}")
+endforeach()
+
 
 add_subdirectory(src)
 

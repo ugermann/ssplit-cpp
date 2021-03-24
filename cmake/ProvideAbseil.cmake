@@ -7,7 +7,6 @@ if (EXISTS ${ABSEIL_SOURCE_DIR}/.git)
 else()
   set(ABSEIL_GIT_REPO "https://github.com/abseil/abseil-cpp.git")
 endif()
-message("ABSEIL_GIT_REPO is ${ABSEIL_GIT_REPO}")
 
 if(CMAKE_CXX_COMPILER MATCHES "/em\\+\\+(-[a-zA-Z0-9.])?$")
   set(ABSEIL_CMAKE_ARGS_FOR_WASM "-msimd128 -Wno-deprecated-copy-dtor")
@@ -23,13 +22,12 @@ ExternalProject_Add(abseil
   INSTALL_DIR ${CMAKE_BINARY_DIR}
   CMAKE_ARGS
   "-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}"
-  "-DCMAKE_CXX_FLAGS='${ABSEIL_CMAKE_ARGS_FOR_WASM}'")
+  "-DCMAKE_CXX_FLAGS='-std=c++11 ${ABSEIL_CMAKE_ARGS_FOR_WASM}'")
 
 include_directories(${CMAKE_BINARY_DIR}/include)
 foreach(alib base city strings hash raw_hash_set)
   string(CONCAT alibfull
     "${CMAKE_BINARY_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}"
     "absl_${alib}${CMAKE_STATIC_LIBRARY_SUFFIX}")
-  message("LIBRARY: ${alibfull}")
   set(ABSEIL_LIBS ${ABSEIL_LIBS} ${alibfull})
 endforeach()
