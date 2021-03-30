@@ -18,6 +18,7 @@ option(USE_INTERNAL_PCRE2 "Force use internal PCRE2 instead of system PCRE2" OFF
 # Does the current version of cmake supports C++17?
 list(FIND CMAKE_CXX_COMPILE_FEATURES cxx_std_17 CMAKE_SUPPORTS_CXX17)
 if (${CMAKE_SUPPORTS_CXX17} EQUAL -1) # No, it doesn't.
+  message(WARNING "C++-17 not supported by current setup. Forcing use of abseil.")
   # C++-17 is not available
   set(USE_ABSEIL TRUE CACHE BOOL "Force abseil" FORCE)
   set(CMAKE_CXX_STANDARD 11)
@@ -29,7 +30,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -O3")
 if (USE_ABSEIL)
   message("COMPILING WITH ABSEIL ${USE_ABSEIL}")
   include(ProvideAbseil)
-  add_definitions(-DUSE_ABSEIL)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DUSE_ABSEIL=1")
 endif(USE_ABSEIL)
 
 # Check if this is a standalone compile (=>compile executables)
@@ -66,5 +67,6 @@ if(USE_INTERNAL_PCRE2)
 endif(USE_INTERNAL_PCRE2)
 
 if(USE_ABSEIL)
+  # target_compile_options(ssplit PUBLIC -DUSE_ABSEIL=1)
   add_dependencies(ssplit abseil) # this needs to happen after adding src
 endif(USE_ABSEIL)

@@ -4,7 +4,7 @@
 
 #define PCRE2_CODE_UNIT_WIDTH 8
 #include <pcre2.h>
-#include "typedefs.h"
+#include "ssplit_typedefs.h"
 
 // inspired by https://github.com/luvit/pcre2/blob/master/src/pcre2demo.c
 

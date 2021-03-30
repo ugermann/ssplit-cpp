@@ -17,12 +17,12 @@ ExternalProject_Add(abseil
   GIT_REPOSITORY ${ABSEIL_GIT_REPO}
   GIT_TAG "20200923.3"
   GIT_SHALLOW ON
-  GIT_PROGRESS OFF
   SOURCE_DIR ${ABSEIL_SOURCE_DIR}
   INSTALL_DIR ${CMAKE_BINARY_DIR}
   CMAKE_ARGS
   "-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}"
   "-DCMAKE_CXX_FLAGS='-std=c++11 ${ABSEIL_CMAKE_ARGS_FOR_WASM}'")
+# Note that GIT_PROGRESS isn't available until cmake 3.8
 
 include_directories(${CMAKE_BINARY_DIR}/include)
 foreach(alib base city strings hash raw_hash_set)

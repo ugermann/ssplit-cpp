@@ -4,7 +4,7 @@
 #include<unordered_map>
 // @TODO: check which C++ version we are using ...
 //        ... maybe use C17 standard types for C17 and upwards?
-#include "typedefs.h"
+#include "ssplit_typedefs.h"
 
 namespace ug{
 namespace ssplit{

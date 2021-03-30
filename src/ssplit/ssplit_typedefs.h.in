@@ -1,6 +1,7 @@
 #pragma once
+#define SSPLIT_USE_ABSEIL ${SSPLIT_USE_ABSEIL}
 #include <string>
-#if USE_ABSEIL
+#if SSPLIT_USE_ABSEIL
 #  include "absl/strings/string_view.h"
 #  include "absl/container/flat_hash_map.h"
 #else
@@ -10,7 +11,7 @@
 namespace ug{
 namespace ssplit{
 
-#if USE_ABSEIL
+#if SSPLIT_USE_ABSEIL
   typedef absl::string_view string_view;
   typedef absl::flat_hash_map<std::string, int> prefix_map_t;
 #else
