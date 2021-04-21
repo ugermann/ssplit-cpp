@@ -1,4 +1,4 @@
-name: "Compile on Ubuntu with internal PCRE2"
+name: "Compile on Ubuntu with abseil and internal PCRE2"
 
 on:
   push:
