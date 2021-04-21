@@ -58,7 +58,7 @@ if(PCRE2_FOUND)
   set(EXT_LIBS ${EXT_LIBS} ${PCRE2_LIBRARIES})
   message("Using these libraries: ${EXT_LIBS}")
 else(PCRE2_FOUND)
-  message(SEND_ERROR "Cannot find pcrecpp libraries. Terminating.")
+  message(SEND_ERROR "Cannot find pcre2 libraries. Terminating.")
 endif(PCRE2_FOUND)
 
 add_subdirectory(src)

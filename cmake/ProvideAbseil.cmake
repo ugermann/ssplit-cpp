@@ -3,11 +3,12 @@ set(ABSEIL_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/3rd-party/abseil-cpp")
 
 if (EXISTS ${ABSEIL_SOURCE_DIR}/.git)
   # no need to clone again
+  message("ABSEIL already cloned into ${ABSEIL_SOURCE_DIR}.")
   set(ABSEIL_GIT_REPO "")
 else()
   set(ABSEIL_GIT_REPO "https://github.com/abseil/abseil-cpp.git")
+  message("Will clone ABSEIL from ${ABSEIL_GIT_REPO} into ${ABSEIL_SOURCE_DIR}.")
 endif()
-message("ABSEIL_GIT_REPO is ${ABSEIL_GIT_REPO}")
 
 if(CMAKE_CXX_COMPILER MATCHES "/em\\+\\+(-[a-zA-Z0-9.])?$")
   set(ABSEIL_CMAKE_ARGS_FOR_WASM "-msimd128 -Wno-deprecated-copy-dtor")
