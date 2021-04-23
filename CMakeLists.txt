@@ -8,14 +8,20 @@ project (ssplit CXX)
 
 # Default is C++17, check if compiler supports, else hard-fail asking user to explicitly mention C++-11
 include(CheckCXXCompilerFlag)
-CHECK_CXX_COMPILER_FLAG("-std=c++17" COMPILER_SUPPORTS_CXX17)
+if(MSVC) # MSVC compiler has different flags
+    CHECK_CXX_COMPILER_FLAG("/std:c++17" COMPILER_SUPPORTS_CXX17)
+    CHECK_CXX_COMPILER_FLAG("/std:c++11" COMPILER_SUPPORTS_CXX11)
+else(MSVC)
+    CHECK_CXX_COMPILER_FLAG("-std=c++17" COMPILER_SUPPORTS_CXX17)
+    CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
+endif(MSVC)
 if(NOT COMPILER_SUPPORTS_CXX17 AND NOT USE_CXX11)
     message(SEND_ERROR "Please enable -DUSE_CXX11=on as compiler does not support C++17." 
                        "This will enable abseil-cpp library")
 endif()
 
 
-option(SSPLIT_USE_CXX11 "Restrict to C++-11, enabes abseil string-view" OFF)
+option(SSPLIT_USE_CXX11 "Restrict to C++-11, enables abseil string-view" OFF)
 option(SSPLIT_USE_INTERNAL_PCRE2 "Use internal PCRE2 instead of system PCRE2" OFF)
 option(SSPLIT_COMPILE_LIBRARY_ONLY "Compile library only" OFF)
 
@@ -47,16 +53,19 @@ endif(USE_CXX11)
 # Enforce the standard set above.
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(CMAKE_FIND_LIBRARY_SUFFIXES .a)
-
-
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+if(WIN32) # Windows static extension is .lib
+    set(CMAKE_FIND_LIBRARY_SUFFIXES .lib)
+else(WIN32)
+    set(CMAKE_FIND_LIBRARY_SUFFIXES .a)
+endif(WIN32)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -O3")
 
 include(FindPCRE2)
 if(PCRE2_FOUND)
   include_directories(${PCRE2_INCLUDE_DIRS})
   set(EXT_LIBS ${EXT_LIBS} ${PCRE2_LIBRARIES})
-  message("Using these libraries: ${EXT_LIBS}")
+  message("   Using these libraries: ${EXT_LIBS}")
 else(PCRE2_FOUND)
   message(SEND_ERROR "Cannot find pcre2 libraries. Terminating.")
 endif(PCRE2_FOUND)
