@@ -31,13 +31,14 @@ if(USE_INTERNAL_PCRE2)
   # Set configure options for internal pcre2 depeding on compiler
   if(CMAKE_CXX_COMPILER MATCHES "/em\\+\\+(-[a-zA-Z0-9.])?$")
     # jit compilation isn't supported by wasm
-    set(PCRE2_JIT_OPTION  "--disable-jit")
+    set(PCRE2_JIT_OPTION  "-DPCRE2_SUPPORT_JIT=OFF")
   else()
-    set(PCRE2_JIT_OPTION  "--enable-jit")
+    set(PCRE2_JIT_OPTION  "-DPCRE2_SUPPORT_JIT=ON")
   endif()
   set(PCRE2_CONFIGURE_OPTIONS
-    --disable-shared
-    --prefix=${CMAKE_BINARY_DIR}
+    -DBUILD_SHARED_LIBS=OFF
+    -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}
+    -DCMAKE_BUILD_TYPE=Release
     ${PCRE2_JIT_OPTION}
     )
 
@@ -52,7 +53,8 @@ if(USE_INTERNAL_PCRE2)
     URL ${PCRE2_URL}
     DOWNLOAD_DIR ${PCRE2_SRC_DIR}
     SOURCE_DIR ${PCRE2_SRC_DIR}
-    CONFIGURE_COMMAND ${PCRE2_SRC_DIR}/configure ${PCRE2_CONFIGURE_OPTIONS}
+    CONFIGURE_COMMAND ${CMAKE_COMMAND} ${PCRE2_SRC_DIR} ${PCRE2_CONFIGURE_OPTIONS}
+    BUILD_COMMAND ${CMAKE_COMMAND} --build <BINARY_DIR>
     INSTALL_DIR ${CMAKE_BINARY_DIR}
     BUILD_BYPRODUCTS ${PCRE2_LIBRARIES})
 
