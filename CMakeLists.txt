@@ -6,8 +6,13 @@ set(CMAKE_BUILD_TYPE "Release")
 
 project (ssplit CXX)
 include(CheckCXXCompilerFlag)
-CHECK_CXX_COMPILER_FLAG("-std=c++17" COMPILER_SUPPORTS_CXX17)
-CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
+if(MSVC) # MSVC compiler has different flags
+    CHECK_CXX_COMPILER_FLAG("/std:c++17" COMPILER_SUPPORTS_CXX17)
+    CHECK_CXX_COMPILER_FLAG("/std:c++11" COMPILER_SUPPORTS_CXX11)
+else(MSVC)
+    CHECK_CXX_COMPILER_FLAG("-std=c++17" COMPILER_SUPPORTS_CXX17)
+    CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
+endif(MSVC)
 
 option(USE_INTERNAL_PCRE2 "Use internal PCRE2 instead of system PCRE2" OFF)
 option(USE_ABSEIL "Use the abseil library (works with C++11)." OFF)
@@ -42,8 +47,11 @@ else(hasParent)
 endif(hasParent)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_FIND_LIBRARY_SUFFIXES .a)
-
+if(WIN32) # Windows static extension is .lib
+    set(CMAKE_FIND_LIBRARY_SUFFIXES .lib)
+else(WIN32)
+    set(CMAKE_FIND_LIBRARY_SUFFIXES .a)
+endif(WIN32)
 include(FindPCRE2)
 if(PCRE2_FOUND)
   include_directories(${PCRE2_INCLUDE_DIRS})
