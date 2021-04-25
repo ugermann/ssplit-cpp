@@ -23,7 +23,14 @@ endif()
 
 option(SSPLIT_USE_CXX11 "Restrict to C++-11, enables abseil string-view" OFF)
 option(SSPLIT_USE_INTERNAL_PCRE2 "Use internal PCRE2 instead of system PCRE2" OFF)
-option(SSPLIT_COMPILE_LIBRARY_ONLY "Compile library only" OFF)
+# Check if this is a standalone compile (=>compile executables)
+# or an embedded compile (this directory was included via subdir)
+get_directory_property(hasParent PARENT_DIRECTORY)
+if(hasParent)
+  option(SSPLIT_COMPILE_LIBRARY_ONLY "Compile library only" OFF)
+else(hasParent)
+  option(SSPLIT_COMPILE_LIBRARY_ONLY "Compile library only" ON)
+endif(hasParent)
 
 # Make SSPLIT_ prefixed option local.
 set(USE_CXX11 ${SSPLIT_USE_CXX11})
