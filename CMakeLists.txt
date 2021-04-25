@@ -70,7 +70,7 @@ else(PCRE2_FOUND)
   message(SEND_ERROR "Cannot find pcre2 libraries. Terminating.")
 endif(PCRE2_FOUND)
 
-add_subdirectory(src)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 if(USE_INTERNAL_PCRE2)
   add_dependencies(ssplit pcre2) # this needs to happen after adding src
