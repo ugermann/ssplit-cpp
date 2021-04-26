@@ -40,6 +40,8 @@ if(USE_INTERNAL_PCRE2)
     -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}
     -DCMAKE_BUILD_TYPE=Release
     ${PCRE2_JIT_OPTION}
+    -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE} # Necessary for proper MacOS compilation
+    -DCMAKE_CROSSCOMPILING_EMULATOR=${CMAKE_CROSSCOMPILING_EMULATOR} # Necessary for proper MacOS compilation
     )
 
   # set include dirs and libraries for PCRE2
