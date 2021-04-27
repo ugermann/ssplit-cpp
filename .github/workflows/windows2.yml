@@ -31,6 +31,15 @@ jobs:
         vcpkgDirectory: ${{ github.workspace }}/vcpkg/
         vcpkgTriplet: x64-windows-static
 
+    - name: Build
+      uses: lukka/run-cmake@v3
+      with:
+        buildDirectory: ${{ github.workspace }}/build
+        cmakeAppendedArgs: '-G Ninja'
+        cmakeListsOrSettingsJson: CMakeListsTxtAdvanced
+        cmakeListsTxtPath: ${{ github.workspace }}/CMakeLists.txt
+        useVcpkgToolchainFile: true
+
     # # Windows CUDA builds use USE_NCCL=off due to compilation errors.
     # - name: Build Debug
     #   uses: lukka/run-cmake@v3
