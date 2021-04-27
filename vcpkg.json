@@ -1,0 +1,5 @@
+{
+    "name": "ssplit-cpp"
+    "version-string": 0.1.0
+    "dependencies": [ pcre2 ]
+}
