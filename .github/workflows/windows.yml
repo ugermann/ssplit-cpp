@@ -6,7 +6,15 @@ on:
 
 jobs:
   build:
-    runs-on: windows-2019
+    name: "Compile on ${{ matrix.os }}"
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [widows-latest]
+        include:
+          - os: windows-latest
+            triplet: x64-windows
 
     env:
       # Indicates the CMake build directory where project files and binaries are being produced.
@@ -16,6 +24,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      # Setup the build machine with the most recent versions of CMake
+      # and Ninja. Both are cached if not already: on subsequent runs
+      # both will be quickly restored from GitHub cache service.
+      - uses: lukka/get-cmake@latest
     
       # Restore both vcpkg and its artifacts from the GitHub cache service.
       - name: Restore vcpkg and its artifacts.
@@ -48,12 +63,24 @@ jobs:
           # existing already).
           key: |
             ${{ hashFiles( 'vcpkg_manifest/vcpkg.json' ) }}-${{ hashFiles( '.git/modules/vcpkg/HEAD' )}}-${{ matrix.triplet }}-invalidate
-        
-       
-    - name: Show content of workspace after cache has been restored
-      run: find $RUNNER_WORKSPACE
-      shell: bash
 
+      - name: Show content of workspace after cache has been restored
+        run: find $RUNNER_WORKSPACE
+        shell: bash
+
+      # On Windows runners, let's ensure to have the Developer Command
+      # Prompt environment setup correctly. As used here the Developer
+      # Command Prompt created is targeting x64 and using the default
+      # the Windows SDK.
+      
+      - uses: ilammy/msvc-dev-cmd@v1
+      # Run CMake to generate Ninja project files, using the vcpkg's
+      # toolchain file to resolve and install the dependencies as
+      # specified in vcpkg.json.
+      - name: Install dependencies and generate project files
+        run: |
+          cmake -S "${{ github.workspace }}/vcpkg_manifest" -B "${{ env.CMAKE_BUILD_DIR }}" -GNinja -DCMAKE_TOOLCHAIN_FILE="${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake"
+        
     # - name: Prepare vcpkg
     #   uses: lukka/run-vcpkg@v4
     #   with:
