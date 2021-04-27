@@ -82,7 +82,7 @@ jobs:
           # changed as well, and it must be brand new (i.e. not
           # existing already).
           key: |
-            ${{ hashFiles( 'vcpkg_manifest/vcpkg.json' ) }}-${{ hashFiles( '.git/modules/vcpkg/HEAD' )}}-${{ matrix.triplet }}-invalidate
+            ${{ hashFiles( 'vcpkg.json' ) }}-${{ hashFiles( '.git/modules/vcpkg/HEAD' )}}-${{ matrix.triplet }}-invalidate
       - name: Show content of workspace after cache has been restored
         run: find $RUNNER_WORKSPACE
         shell: bash
@@ -96,7 +96,7 @@ jobs:
       # specified in vcpkg.json.
       - name: Install dependencies and generate project files
         run: |
-          cmake -S "${{ github.workspace }}/vcpkg_manifest" -B "${{ env.CMAKE_BUILD_DIR }}" -GNinja -DCMAKE_TOOLCHAIN_FILE="${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake"
+          cmake -S "${{ github.workspace }}" -B "${{ env.CMAKE_BUILD_DIR }}" -GNinja -DCMAKE_TOOLCHAIN_FILE="${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake"
       # Build the whole project with Ninja (which is spawned by CMake).
       - name: Build
         run: |
