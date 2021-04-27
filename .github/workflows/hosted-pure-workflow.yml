@@ -16,7 +16,7 @@
 name: hosted-pure-workflow
 on:
   push:
-    branches: [windows-runner]
+    branches: [windows-runnerx]
   # pull_request:
   #   branches: [master]
 
