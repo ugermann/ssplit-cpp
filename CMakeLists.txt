@@ -5,6 +5,9 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 set(CMAKE_BUILD_TYPE "Release")
 
 project (ssplit CXX)
+if (POLICY CMP0074)
+  cmake_policy(SET CMP0074 NEW) # CMake 3.12
+endif ()
 
 # Default is C++17, check if compiler supports, else hard-fail asking user to explicitly mention C++-11
 include(CheckCXXCompilerFlag)
