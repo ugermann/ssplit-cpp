@@ -8,7 +8,13 @@ jobs:
   build:
     runs-on: windows-2019
 
-    steps:
+  env:
+    # Indicates the CMake build directory where project files and binaries are being produced.
+    CMAKE_BUILD_DIR: ${{ github.workspace }}/builddir/
+    # Indicates the location of the vcpkg as a Git submodule of the project repository.
+    VCPKG_ROOT: ${{ github.workspace }}/vcpkg
+
+  steps:
     - uses: actions/checkout@v2
     
     # Restore both vcpkg and its artifacts from the GitHub cache service.
@@ -48,7 +54,7 @@ jobs:
       with:
         vcpkgArguments: pcre2
         vcpkgGitCommitId: 6185aa76504a5025f36754324abf307cc776f3da
-        vcpkgDirectory: ${{ github.workspace }}/vcpkg/
+        vcpkgDirectory: ${{ env.VCPKG_ROOT }}
         vcpkgTriplet: x64-windows-static
         
     - name: Show content of workspace after cache has been restored
