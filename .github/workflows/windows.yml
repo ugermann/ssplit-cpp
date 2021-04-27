@@ -8,70 +8,71 @@ jobs:
   build:
     runs-on: windows-2019
 
-  env:
-    # Indicates the CMake build directory where project files and binaries are being produced.
-    CMAKE_BUILD_DIR: ${{ github.workspace }}/builddir/
-    # Indicates the location of the vcpkg as a Git submodule of the project repository.
-    VCPKG_ROOT: ${{ github.workspace }}/vcpkg
+    env:
+      # Indicates the CMake build directory where project files and binaries are being produced.
+      CMAKE_BUILD_DIR: ${{ github.workspace }}/builddir/
+      # Indicates the location of the vcpkg as a Git submodule of the project repository.
+      VCPKG_ROOT: ${{ github.workspace }}/vcpkg
 
-  steps:
-    - uses: actions/checkout@v2
+    steps:
+      - uses: actions/checkout@v2
     
-    # Restore both vcpkg and its artifacts from the GitHub cache service.
-    - name: Restore vcpkg and its artifacts.
-      uses: actions/cache@v2
-      with:
-        # The first path is where vcpkg generates artifacts while
-        # consuming the vcpkg.json manifest file.  The second path
-        # is the location of vcpkg (it contains the vcpkg executable
-        # and data files).  The other paths starting with '!' are
-        # exclusions: they contain termporary files generated during
-        # the build of the installed packages.
-        path: |
-          ${{ env.CMAKE_BUILD_DIR }}/vcpkg_installed/
-          ${{ env.VCPKG_ROOT }}
-          !${{ env.VCPKG_ROOT }}/buildtrees
-          !${{ env.VCPKG_ROOT }}/packages
-          !${{ env.VCPKG_ROOT }}/downloads
-        # The key is composed in a way that it gets properly
-        # invalidated: this must happen whenever vcpkg's Git commit
-        # id changes, or the list of packages changes. In this case
-        # a cache miss must happen and a new entry with a new key
-        # with be pushed to GitHub the cache service.  The key
-        # includes: hash of the vcpkg.json file, the hash of the
-        # vcpkg Git commit id, and the used vcpkg's triplet. The
-        # vcpkg's commit id would suffice, but computing an hash out
-        # it does not harm.  Note: given a key, the cache content is
-        # immutable. If a cache entry has been created improperly,
-        # in order the recreate the right content the key must be
-        # changed as well, and it must be brand new (i.e. not
-        # existing already).
-        key: |
-          ${{ hashFiles( 'vcpkg_manifest/vcpkg.json' ) }}-${{ hashFiles( '.git/modules/vcpkg/HEAD' )}}-${{ matrix.triplet }}-invalidate
+      # Restore both vcpkg and its artifacts from the GitHub cache service.
+      - name: Restore vcpkg and its artifacts.
+        uses: actions/cache@v2
+        with:
+          # The first path is where vcpkg generates artifacts while
+          # consuming the vcpkg.json manifest file.  The second path
+          # is the location of vcpkg (it contains the vcpkg executable
+          # and data files).  The other paths starting with '!' are
+          # exclusions: they contain termporary files generated during
+          # the build of the installed packages.
+          path: |
+            ${{ env.CMAKE_BUILD_DIR }}/vcpkg_installed/
+            ${{ env.VCPKG_ROOT }}
+            !${{ env.VCPKG_ROOT }}/buildtrees
+            !${{ env.VCPKG_ROOT }}/packages
+            !${{ env.VCPKG_ROOT }}/downloads
+          # The key is composed in a way that it gets properly
+          # invalidated: this must happen whenever vcpkg's Git commit
+          # id changes, or the list of packages changes. In this case
+          # a cache miss must happen and a new entry with a new key
+          # with be pushed to GitHub the cache service.  The key
+          # includes: hash of the vcpkg.json file, the hash of the
+          # vcpkg Git commit id, and the used vcpkg's triplet. The
+          # vcpkg's commit id would suffice, but computing an hash out
+          # it does not harm.  Note: given a key, the cache content is
+          # immutable. If a cache entry has been created improperly,
+          # in order the recreate the right content the key must be
+          # changed as well, and it must be brand new (i.e. not
+          # existing already).
+          key: |
+            ${{ hashFiles( 'vcpkg_manifest/vcpkg.json' ) }}-${{ hashFiles( '.git/modules/vcpkg/HEAD' )}}-${{ matrix.triplet }}-invalidate
         
-    - name: Prepare vcpkg
-      uses: lukka/run-vcpkg@v4
-      with:
-        vcpkgArguments: pcre2
-        vcpkgGitCommitId: 6185aa76504a5025f36754324abf307cc776f3da
-        vcpkgDirectory: ${{ env.VCPKG_ROOT }}
-        vcpkgTriplet: x64-windows-static
-        
+       
     - name: Show content of workspace after cache has been restored
       run: find $RUNNER_WORKSPACE
       shell: bash
 
-    - name: Build Debug
-      uses: lukka/run-cmake@v3
-      with:
-        buildDirectory: ${{ github.workspace }}/build/
-        cmakeAppendedArgs: '-G "Visual Studio 16 2019" -A x64 -DCMAKE_BUILD_TYPE="Debug"'
-        cmakeListsOrSettingsJson: CMakeListsTxtAdvanced
-        cmakeListsTxtPath: ${{ github.workspace }}/CMakeLists.txt
-        useVcpkgToolchainFile: true
+    # - name: Prepare vcpkg
+    #   uses: lukka/run-vcpkg@v4
+    #   with:
+    #     vcpkgArguments: pcre2
+    #     vcpkgGitCommitId: 6185aa76504a5025f36754324abf307cc776f3da
+    #     vcpkgDirectory: ${{ env.VCPKG_ROOT }}
+    #     vcpkgTriplet: x64-windows-static
+
+    # - name: Build Debug
+    #   uses: lukka/run-cmake@v3
+    #   with:
+    #     buildDirectory: ${{ github.workspace }}/build/
+    #     cmakeAppendedArgs: '-G "Visual Studio 16 2019" -A x64 -DCMAKE_BUILD_TYPE="Debug"'
+    #     cmakeListsOrSettingsJson: CMakeListsTxtAdvanced
+    #     cmakeListsTxtPath: ${{ github.workspace }}/CMakeLists.txt
+    #     useVcpkgToolchainFile: true
       
-    - name: "List files"
-      working-directory: ${{ github.workspace }}/build/  
-      run: |
-           dir *.exe
-      shell: cmd
+    # - name: "List files"
+    #   working-directory: ${{ github.workspace }}/build/  
+    #   run: |
+    #        dir *.exe
+    #   shell: cmd
