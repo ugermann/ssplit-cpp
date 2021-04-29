@@ -15,13 +15,13 @@ else(MSVC)
     CHECK_CXX_COMPILER_FLAG("-std=c++17" COMPILER_SUPPORTS_CXX17)
     CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
 endif(MSVC)
-if(NOT COMPILER_SUPPORTS_CXX17 AND NOT USE_CXX11)
-    message(SEND_ERROR "Please enable -DUSE_CXX11=on as compiler does not support C++17." 
-                       "This will enable abseil-cpp library")
-endif()
+if(NOT COMPILER_SUPPORTS_CXX17)
+    message(WARNING "Forcing compilation using C++11 and Abseil")
+    option(SSPLIT_USE_CXX11 "Restrict to C++-11, enables abseil string-view" ON)
+else(NOT COMPILER_SUPPORTS_CXX17)
+    option(SSPLIT_USE_CXX11 "Restrict to C++-11, enables abseil string-view" OFF)
+endif(NOT COMPILER_SUPPORTS_CXX17)
 
-
-option(SSPLIT_USE_CXX11 "Restrict to C++-11, enables abseil string-view" OFF)
 option(SSPLIT_USE_INTERNAL_PCRE2 "Use internal PCRE2 instead of system PCRE2" OFF)
 option(SSPLIT_COMPILE_LIBRARY_ONLY "Compile library only" OFF)
 
@@ -46,20 +46,35 @@ if (USE_CXX11)
   # subdirectory, we would want this definition to stick for future includes as
   # well. Hence add_definitions here.
   add_definitions(-DUSE_ABSEIL)
+
+  # We may need to manually specify CXX flags here;
+  if(MSVC)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++11")
+  else(MSVC)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+  endif(MSVC)
 else(USE_CXX11)
-  set(CMAKE_CXX_STANDARD 17)
+  if(${CMAKE_VERSION} VERSION_GREATER "3.8.0") # Older cmake doesn't know how to set C++17 standard...
+    set(CMAKE_CXX_STANDARD 17)
+  endif()
+  if(MSVC)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++17")
+  else(MSVC)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
+  endif(MSVC)
 endif(USE_CXX11)
 
-# Enforce the standard set above.
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 if(WIN32) # Windows static extension is .lib
     set(CMAKE_FIND_LIBRARY_SUFFIXES .lib)
+    if(MSVC)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /O2")
+    else(MSVC)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -O3")
+    endif(MSVC)
 else(WIN32)
     set(CMAKE_FIND_LIBRARY_SUFFIXES .a)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -O3")
 endif(WIN32)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -O3")
 
 include(FindPCRE2)
 if(PCRE2_FOUND)

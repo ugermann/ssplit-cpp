@@ -14,6 +14,13 @@ if(CMAKE_CXX_COMPILER MATCHES "/em\\+\\+(-[a-zA-Z0-9.])?$")
   set(ABSEIL_CMAKE_ARGS_FOR_WASM "-msimd128 -Wno-deprecated-copy-dtor")
 endif()
 
+#ensure c++11 on older compilers that don't do C++11 by default
+if(MSVC)
+  set(CXX_ADDITIONAL_FLAGS "/02 /std:c++11")
+else(MSVC)
+  set(CXX_ADDITIONAL_FLAGS "-O3 -std=c++11")
+endif(MSVC)
+
 ExternalProject_Add(abseil
   PREFIX ${CMAKE_BINARY_DIR}/abseil
   GIT_REPOSITORY ${ABSEIL_GIT_REPO}
@@ -23,7 +30,7 @@ ExternalProject_Add(abseil
   INSTALL_DIR ${CMAKE_BINARY_DIR}
   CMAKE_ARGS
   "-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}"
-  "-DCMAKE_CXX_FLAGS='${ABSEIL_CMAKE_ARGS_FOR_WASM}'")
+  "-DCMAKE_CXX_FLAGS=${ABSEIL_CMAKE_ARGS_FOR_WASM} ${CXX_ADDITIONAL_FLAGS}")
 
 include_directories(${CMAKE_BINARY_DIR}/include)
 foreach(alib base throw_delegate city strings hash raw_hash_set)
