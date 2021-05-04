@@ -21,7 +21,7 @@ jobs:
         vcpkgDirectory: ${{ github.workspace }}/vcpkg/
         vcpkgTriplet: x64-windows-static
       
-    - name: Buld Release
+    - name: Build Release on Windows
       uses: lukka/run-cmake@v3
       with:
         buildDirectory: ${{ github.workspace }}/build/
