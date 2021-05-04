@@ -22,31 +22,31 @@ jobs:
       run: make -j2 VERBOSE=1
     - name: "Test one-paragraph-per-line (mapped)"
       run: |
-           diff -qa <(./build/src/ssplit -mp -n \
+           diff -qa <(./build/ssplit -mp -n \
            -p nonbreaking_prefixes/nonbreaking_prefix.en \
            tests/sample.en) tests/sample.en.mp.n.expected
     - name: "Test one-paragraph-per-line (streamed)"
       run: |
-           diff -qa <(./build/src/ssplit -mp -n \
+           diff -qa <(./build/ssplit -mp -n \
            -p nonbreaking_prefixes/nonbreaking_prefix.en \
            < tests/sample.en) tests/sample.en.mp.n.expected
     - name: "Test one-sentence-per-line (mapped)"
       run: |
-          diff -qa <(./build/src/ssplit -ms -n \
+          diff -qa <(./build/ssplit -ms -n \
           -p nonbreaking_prefixes/nonbreaking_prefix.en \
           tests/sample.en) tests/sample.en.ms.n.expected
     - name: "Test one-sentence-per-line (streamed)"
       run: |
-          diff -qa <(./build/src/ssplit -ms -n \
+          diff -qa <(./build/ssplit -ms -n \
           -p nonbreaking_prefixes/nonbreaking_prefix.en \
           < tests/sample.en) tests/sample.en.ms.n.expected
     - name: "Test wrapped-text (mapped)"
       run: |
-          diff -qa <(./build/src/ssplit -mw -n \
+          diff -qa <(./build/ssplit -mw -n \
           -p nonbreaking_prefixes/nonbreaking_prefix.en \
           tests/sample.en.wrapped) tests/sample.en.wrapped.mw.n.expected
     - name: "Test wrapped-text (streamed)"
       run: |
-          diff -qa <(./build/src/ssplit -mw -n \
+          diff -qa <(./build/ssplit -mw -n \
           -p nonbreaking_prefixes/nonbreaking_prefix.en \
           < tests/sample.en.wrapped) tests/sample.en.wrapped.mw.n.expected
