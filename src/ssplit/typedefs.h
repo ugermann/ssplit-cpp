@@ -13,7 +13,7 @@
 
 
 #if defined(__GNUC__) && !defined(__clang__) && __GNUC__ < 6
-// On gcc version 5.x , string_view is povided as
+// On gcc version 5.x , string_view is provided as
 // std::experimental::string_view
 // Newer versions of clang apparently export GNUC v 4.2, so we need
 // the extra check to exclude the __clang__ scenario.
