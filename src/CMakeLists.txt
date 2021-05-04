@@ -8,7 +8,9 @@ set_target_properties(ssplit PROPERTIES
 
 if (NOT COMPILE_LIBRARY_ONLY)
   include_directories(3rd-party/CLI11)
-  if (NOT WIN32) # ssplit-main has some mmap() code, and include "sys/mman.h" which is only available on *nix
+  if (NOT WIN32)
+    # ssplit-main has some mmap() code, and include "sys/mman.h"
+    # which is only available on *nix
     add_executable(ssplit_executable command/ssplit_main.cpp)
     target_link_libraries(ssplit_executable ssplit)
     set_target_properties(ssplit_executable PROPERTIES
