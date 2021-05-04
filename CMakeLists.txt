@@ -9,15 +9,13 @@ project (ssplit CXX)
 option(SSPLIT_USE_INTERNAL_PCRE2 "Use internal PCRE2 instead of system's." OFF)
 option(SSPLIT_COMPILE_LIBRARY_ONLY "Compile library only." OFF)
 
-# By default, we use CXX14 for backwards compatibility (minimum required)
-# this can be "upgraded" to CXX17 via a CMAKE options.
-option(SSPLIT_USE_CXX17 "Use c++17 instead of c++14 for compiling ssplit" OFF)
-if (SSPLIT_USE_CXX17)
-  set(CMAKE_CXX_STANDARD 17)
-else(SSPLIT_USE_CXX17)
-  set(CMAKE_CXX_STANDARD 14)
-endif(SSPLIT_USE_CXX17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+if (${CMAKE_VERSION} VERSION_GREATER "3.8.0")
+  set(CMAKE_CXX_STANDARD 17)
+else(${CMAKE_VERSION} VERSION_GREATER "3.8.0")
+  # Older cmake doesn't know how to set C++17 standard.
+  set(CMAKE_CXX_STANDARD 14)
+endif(${CMAKE_VERSION} VERSION_GREATER "3.8.0")
 
 # WASM compiles via emscripten set CMAKE_TOOLCHAIN_FILE. TO avoid cmake
 # warnings in other scenarios, we set this to an empty value.
