@@ -67,13 +67,13 @@ int main(int argc, char *argv[]) {
   }
 
   // Convert to a string_view, and retain string.
-  std::string_view text_view(text);
+  ug::ssplit::string_view text_view(text);
   ug::ssplit::SentenceStream sentence_stream(text_view, splitter, mode);
 
   const char *p = text_view.data();
 
   int line{0};
-  std::string_view sentence;
+  ug::ssplit::string_view sentence;
   std::ostringstream output_buffer;
 
   while (sentence_stream >> sentence) {
@@ -81,7 +81,7 @@ int main(int argc, char *argv[]) {
       ++line;
 
       // Print non-sentence part.
-      std::string_view pre(p, sentence.data() - p);
+      ug::ssplit::string_view pre(p, sentence.data() - p);
       output_buffer << pre;
 
       // Annotate extracted sentence.
@@ -94,7 +94,7 @@ int main(int argc, char *argv[]) {
 
   // Print remaining part of text.
   const char *end = text_view.data() + text_view.size();
-  std::string_view tail(p, end - p);
+  ug::ssplit::string_view tail(p, end - p);
   if (tail.size()) {
     output_buffer << tail;
   }
