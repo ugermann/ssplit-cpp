@@ -8,6 +8,7 @@ project (ssplit CXX)
 
 option(SSPLIT_USE_INTERNAL_PCRE2 "Use internal PCRE2 instead of system's." OFF)
 option(SSPLIT_COMPILE_LIBRARY_ONLY "Compile library only." OFF)
+option(SSPLIT_PREFER_STATIC_COMPILE "Prefere static over dynamic linking." ON)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 if (${CMAKE_VERSION} VERSION_GREATER "3.8.0")
@@ -23,16 +24,22 @@ set(CMAKE_TOOLCHAIN_FILE "")
 set(USE_ABSEIL OFF) # Default USE_ABSEIL explicitly turned OFF
 
 if(WIN32) # Windows static extension is .lib
-    set(CMAKE_FIND_LIBRARY_SUFFIXES .lib)
     if(MSVC)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /O2")
     else(MSVC)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -O3")
     endif(MSVC)
 else(WIN32)
-    set(CMAKE_FIND_LIBRARY_SUFFIXES .a .so)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -O3")
 endif(WIN32)
+
+IF(SSPLIT_PREFER_STATIC_COMPILE)
+  IF(WIN32)
+      SET(CMAKE_FIND_LIBRARY_SUFFIXES .lib .a ${CMAKE_FIND_LIBRARY_SUFFIXES})
+  ELSE(WIN32)
+      SET(CMAKE_FIND_LIBRARY_SUFFIXES .a ${CMAKE_FIND_LIBRARY_SUFFIXES})
+  ENDIF(WIN32)
+ENDIF(SSPLIT_PREFER_STATIC_COMPILE)
 
 include(FindPCRE2)
 if(PCRE2_FOUND)
