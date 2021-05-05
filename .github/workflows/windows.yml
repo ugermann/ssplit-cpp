@@ -21,18 +21,17 @@ jobs:
         vcpkgDirectory: ${{ github.workspace }}/vcpkg/
         vcpkgTriplet: x64-windows-static
       
-    - name: Buld Debug
+    - name: Build Release on Windows
       uses: lukka/run-cmake@v3
       with:
         buildDirectory: ${{ github.workspace }}/build/
         cmakeAppendedArgs: '-G Ninja
-          -DCMAKE_BUILD_TYPE="Debug"'
+          -DCMAKE_BUILD_TYPE="Release"'
         cmakeListsOrSettingsJson: CMakeListsTxtAdvanced
         cmakeListsTxtPath: ${{ github.workspace }}/CMakeLists.txt
         useVcpkgToolchainFile: true
       
     - name: "List files"
       working-directory: ${{ github.workspace }}/build/  
-      run: |
-           dir *.exe
+      run: dir
       shell: cmd

@@ -6,60 +6,33 @@ set(CMAKE_BUILD_TYPE "Release")
 
 project (ssplit CXX)
 
-# Default is C++17, check if compiler supports, else hard-fail asking user to explicitly mention C++-11
-include(CheckCXXCompilerFlag)
-if(MSVC) # MSVC compiler has different flags
-    CHECK_CXX_COMPILER_FLAG("/std:c++17" COMPILER_SUPPORTS_CXX17)
-    CHECK_CXX_COMPILER_FLAG("/std:c++11" COMPILER_SUPPORTS_CXX11)
-else(MSVC)
-    CHECK_CXX_COMPILER_FLAG("-std=c++17" COMPILER_SUPPORTS_CXX17)
-    CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
-endif(MSVC)
-if(NOT COMPILER_SUPPORTS_CXX17 AND NOT USE_CXX11)
-    message(SEND_ERROR "Please enable -DUSE_CXX11=on as compiler does not support C++17." 
-                       "This will enable abseil-cpp library")
-endif()
+option(SSPLIT_USE_INTERNAL_PCRE2 "Use internal PCRE2 instead of system's." OFF)
+option(SSPLIT_COMPILE_LIBRARY_ONLY "Compile library only." OFF)
 
-
-option(SSPLIT_USE_CXX11 "Restrict to C++-11, enables abseil string-view" OFF)
-option(SSPLIT_USE_INTERNAL_PCRE2 "Use internal PCRE2 instead of system PCRE2" OFF)
-option(SSPLIT_COMPILE_LIBRARY_ONLY "Compile library only" OFF)
-
-# Make SSPLIT_ prefixed option local.
-set(USE_CXX11 ${SSPLIT_USE_CXX11})
-set(USE_INTERNAL_PCRE2 ${SSPLIT_USE_INTERNAL_PCRE2})
-set(COMPILE_LIBRARY_ONLY ${SSPLIT_COMPILE_LIBRARY_ONLY})
-set(USE_ABSEIL OFF) # Default USE_ABSEIL explicitly turned OFF
-set(EXT_LIBS "") # Initialize EXT_LIBS with a legal value.
-
-# Handle C++ Standards
-if (USE_CXX11)
-  set(CMAKE_CXX_STANDARD 11)
-
-  # If CXX11, abseil-cpp has to be enabled and added to EXT_LIBS, since there's
-  # no way to obtain string_view (required) without.
-  set(USE_ABSEIL ON)
-  include(ProvideAbseil)
-  set(EXT_LIBS ${EXT_LIBS} -Wl,--start-group ${ABSEIL_LIBS} -Wl,--end-group)
-
-  # The source files are imported in the library above. If included as a
-  # subdirectory, we would want this definition to stick for future includes as
-  # well. Hence add_definitions here.
-  add_definitions(-DUSE_ABSEIL)
-else(USE_CXX11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+if (${CMAKE_VERSION} VERSION_GREATER "3.8.0")
   set(CMAKE_CXX_STANDARD 17)
-endif(USE_CXX11)
+else(${CMAKE_VERSION} VERSION_GREATER "3.8.0")
+  # Older cmake doesn't know how to set C++17 standard.
+  set(CMAKE_CXX_STANDARD 14)
+endif(${CMAKE_VERSION} VERSION_GREATER "3.8.0")
 
-# Enforce the standard set above.
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+# WASM compiles via emscripten set CMAKE_TOOLCHAIN_FILE. TO avoid cmake
+# warnings in other scenarios, we set this to an empty value.
+set(CMAKE_TOOLCHAIN_FILE "")
+set(USE_ABSEIL OFF) # Default USE_ABSEIL explicitly turned OFF
 
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 if(WIN32) # Windows static extension is .lib
     set(CMAKE_FIND_LIBRARY_SUFFIXES .lib)
+    if(MSVC)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /O2")
+    else(MSVC)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -O3")
+    endif(MSVC)
 else(WIN32)
-    set(CMAKE_FIND_LIBRARY_SUFFIXES .a)
+    set(CMAKE_FIND_LIBRARY_SUFFIXES .a .so)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -O3")
 endif(WIN32)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -O3")
 
 include(FindPCRE2)
 if(PCRE2_FOUND)
@@ -76,7 +49,3 @@ message("Added subdirectory ${CMAKE_CURRENT_SOURCE_DIR}/src")
 if(USE_INTERNAL_PCRE2)
   add_dependencies(ssplit pcre2) # this needs to happen after adding src
 endif(USE_INTERNAL_PCRE2)
-
-if(USE_ABSEIL)
-  add_dependencies(ssplit abseil) # this needs to happen after adding src
-endif(USE_ABSEIL)
