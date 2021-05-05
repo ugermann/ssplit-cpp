@@ -23,14 +23,14 @@ set(CMAKE_TOOLCHAIN_FILE "")
 set(USE_ABSEIL OFF) # Default USE_ABSEIL explicitly turned OFF
 
 if(WIN32) # Windows static extension is .lib
-    set(CMAKE_FIND_LIBRARY_SUFFIXES .lib)
+    set(CMAKE_FIND_LIBRARY_SUFFIXES .lib .a ${CMAKE_FIND_LIBRARY_SUFFIXES})
     if(MSVC)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /O2")
     else(MSVC)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -O3")
     endif(MSVC)
 else(WIN32)
-    set(CMAKE_FIND_LIBRARY_SUFFIXES .a .so)
+    set(CMAKE_FIND_LIBRARY_SUFFIXES .a ${CMAKE_FIND_LIBRARY_SUFFIXES})
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -O3")
 endif(WIN32)
 
