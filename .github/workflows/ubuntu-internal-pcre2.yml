@@ -16,7 +16,7 @@ jobs:
       run: |
         cmake -E make_directory build
         cd build
-        cmake -DUSE_INTERNAL_PCRE2=on ..
+        cmake -DSSPLIT_USE_INTERNAL_PCRE2=on ..
     - name: Compile
       working-directory: build
       run: cmake --build . -j2

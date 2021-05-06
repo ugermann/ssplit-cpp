@@ -17,7 +17,7 @@ jobs:
       run: |
         emcmake cmake -E make_directory build
         cd build
-        emcmake cmake -DUSE_INTERNAL_PCRE2=on ..
+        emcmake cmake -DSSPLIT_USE_INTERNAL_PCRE2=on ..
         emmake make -j2
     - name: list build dir
       run: ls -hal
