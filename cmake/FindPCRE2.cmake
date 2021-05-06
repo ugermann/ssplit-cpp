@@ -1,4 +1,4 @@
-# Depending on the value of USE_INTERNAL_PRCRE2 this cmake file
+# Depending on the value of SSPLIT_USE_INTERNAL_PRCRE2 this cmake file
 # either tries to find the Perl Compatible Regular Expresison library (pcre2)
 # on the system (when OFF), or downloads and compiles them locally (when ON).
 
@@ -7,7 +7,7 @@
 # PCRE2_LIBRARIES - The PCRE library file
 # PCRE2_INCLUDE_DIRS - The folder with the PCRE headers
 
-if(USE_INTERNAL_PCRE2)
+if(SSPLIT_USE_INTERNAL_PCRE2)
   include(ExternalProject)
 
   set(PCRE2_VERSION "10.36")
@@ -60,12 +60,12 @@ if(USE_INTERNAL_PCRE2)
     INSTALL_DIR ${CMAKE_BINARY_DIR}
     BUILD_BYPRODUCTS ${PCRE2_LIBRARIES})
 
-else(USE_INTERNAL_PCRE2)
+else(SSPLIT_USE_INTERNAL_PCRE2)
   
   find_library(PCRE2_LIBRARIES NAMES pcre2 pcre2-8)
   find_path(PCRE2_INCLUDE_DIRS pcre2.h)
 
-endif(USE_INTERNAL_PCRE2)
+endif(SSPLIT_USE_INTERNAL_PCRE2)
 
 if(PCRE2_LIBRARIES AND PCRE2_INCLUDE_DIRS)
   # message(STATUS "PCRE2 libs: ${PCRE2_LIBRARIES}")
