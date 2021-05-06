@@ -6,7 +6,7 @@ set(CMAKE_BUILD_TYPE "Release")
 
 project (ssplit CXX)
 
-option(SSPLIT_USE_INTERNAL_PCRE2 "Use internal PCRE2 instead of system's." OFF)
+option(SSPLIT_SSPLIT_USE_INTERNAL_PCRE2 "Use internal PCRE2 instead of system's." OFF)
 option(SSPLIT_COMPILE_LIBRARY_ONLY "Compile library only." OFF)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -46,6 +46,6 @@ endif(PCRE2_FOUND)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src)
 message("Added subdirectory ${CMAKE_CURRENT_SOURCE_DIR}/src")
 
-if(USE_INTERNAL_PCRE2)
+if(SSPLIT_USE_INTERNAL_PCRE2)
   add_dependencies(ssplit pcre2) # this needs to happen after adding src
-endif(USE_INTERNAL_PCRE2)
+endif(SSPLIT_USE_INTERNAL_PCRE2)
