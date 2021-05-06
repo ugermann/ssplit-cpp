@@ -8,7 +8,7 @@ project (ssplit CXX)
 
 option(SSPLIT_USE_INTERNAL_PCRE2 "Use internal PCRE2 instead of system's." OFF)
 option(SSPLIT_COMPILE_LIBRARY_ONLY "Compile library only." OFF)
-option(SSPLIT_PREFER_STATIC_COMPILE "Prefere static over dynamic linking." ON)
+option(SSPLIT_PREFER_STATIC_COMPILE "Prefer static over dynamic linking." ON)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 if (${CMAKE_VERSION} VERSION_GREATER "3.8.0")
@@ -50,8 +50,9 @@ else(PCRE2_FOUND)
   message(SEND_ERROR "Cannot find pcre2 libraries. Terminating.")
 endif(PCRE2_FOUND)
 
-add_subdirectory(src)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src)
+message("Added subdirectory ${CMAKE_CURRENT_SOURCE_DIR}/src")
 
-if(USE_INTERNAL_PCRE2)
+if(SSPLIT_USE_INTERNAL_PCRE2)
   add_dependencies(ssplit pcre2) # this needs to happen after adding src
-endif(USE_INTERNAL_PCRE2)
+endif(SSPLIT_USE_INTERNAL_PCRE2)
