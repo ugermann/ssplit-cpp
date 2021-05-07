@@ -18,11 +18,6 @@ else(${CMAKE_VERSION} VERSION_GREATER "3.8.0")
   set(CMAKE_CXX_STANDARD 14)
 endif(${CMAKE_VERSION} VERSION_GREATER "3.8.0")
 
-# WASM compiles via emscripten set CMAKE_TOOLCHAIN_FILE. TO avoid cmake
-# warnings in other scenarios, we set this to an empty value.
-set(CMAKE_TOOLCHAIN_FILE "")
-set(USE_ABSEIL OFF) # Default USE_ABSEIL explicitly turned OFF
-
 if(WIN32) # Windows static extension is .lib
     if(MSVC)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /O2")
