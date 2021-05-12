@@ -18,10 +18,13 @@ class SentenceSplitter{
   // 2: prefix only in front of numbers
   int get_prefix_class(string_view piece) const;
 
+  SentenceSplitter(std::istream &istream);
+  void loadFromStream(std::istream &stream);
 public:
   SentenceSplitter();
   SentenceSplitter(std::string const& prefix_file);
   void load(std::string const& fname);
+  void loadFromSerialized(const string_view buffer);
 
   // Find next sentence boundary, return StringPiece for next sentence,
   // advance rest to reflect the rest of the text.

@@ -12,12 +12,16 @@ namespace ssplit{
 void
 SentenceSplitter::
 load(std::string const& fname){
-  using namespace std;
+  std::ifstream pfile(fname);
+  loadFromStream(pfile);
+}
+
+void SentenceSplitter::loadFromStream(std::istream &stream){
+  prefix_type_.clear();
   Regex pat("([^#\\s]*)\\s*(?:(#\\s*NUMERIC_ONLY\\s*#))?", PCRE2_UTF);
   Match M(pat);
-  ifstream pfile(fname);
-  string line, prefix, tag;
-  while (getline(pfile,line)) {
+  std::string line, prefix, tag;
+  while (getline(stream, line)) {
     if (pat.find(line, &M) > 0) {
       auto m1 = M[1];
       if (m1.size()) {
@@ -31,8 +35,12 @@ load(std::string const& fname){
   // }
 }
 
-SentenceSplitter::
-SentenceSplitter(){}
+void SentenceSplitter::loadFromSerialized(const string_view buffer){
+  std::istringstream stream(std::string(buffer.data(), buffer.size()));
+  loadFromStream(stream);
+}
+
+SentenceSplitter::SentenceSplitter(){}
 
 SentenceSplitter::
 SentenceSplitter(std::string const& prefix_file)
