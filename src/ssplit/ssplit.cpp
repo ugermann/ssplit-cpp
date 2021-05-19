@@ -4,8 +4,36 @@
 #include "ssplit.h"
 #include "regex.h"
 #include <cassert>
+
+
+namespace {
+// Anonymous namespace
+
+// Creating an input stream from constant memory
+// https://stackoverflow.com/a/13059195/4565794
+
+#include <streambuf>
+#include <istream>
+
+struct membuf: std::streambuf {
+    membuf(char const* base, size_t size) {
+        char* p(const_cast<char*>(base));
+        this->setg(p, p, p + size);
+    }
+};
+struct imemstream: virtual membuf, std::istream {
+    imemstream(char const* base, size_t size)
+        : membuf(base, size)
+        , std::istream(static_cast<std::streambuf*>(this)) {
+    }
+};
+
+
+}
+
 namespace ug{
 namespace ssplit{
+
 
 
 // Load a prefix file
@@ -36,7 +64,7 @@ void SentenceSplitter::loadFromStream(std::istream &stream){
 }
 
 void SentenceSplitter::loadFromSerialized(const string_view buffer){
-  std::istringstream stream(std::string(buffer.data(), buffer.size()));
+  imemstream stream(buffer.data(), buffer.size());
   loadFromStream(stream);
 }
 
