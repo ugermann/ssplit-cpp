@@ -138,6 +138,7 @@ int main(int argc, char const* argv[]) {
   std::string prefix_file;    // prefix file to be loaded by SentenceSplitter
   std::string modespec {"w"}; // split mode specficication
   std::string input_file;     // file to ssplit (cannot be compressed)
+  bool bytearray{false};
   CLI::App app{"Sentence Splitter"};
   app.add_option("input", input_file, "input file.")
     ->check(CLI::ExistingFile);
@@ -151,6 +152,10 @@ int main(int argc, char const* argv[]) {
   app.add_option("-p,--prefix-file", prefix_file,
                  "File with nonbreaking prefixes.")
     ->check(CLI::ExistingFile);
+
+  app.add_option("-b,--byte-array", bytearray, 
+                 "Use the bytearray load path, for testing purposes only")
+     ->default_str(bytearray);
 
   app.footer("\nIf no input file is given, ssplit reads from stdin. "
              "Input files are memory-mapped (decompression is NOT supported!) "
@@ -172,7 +177,18 @@ int main(int argc, char const* argv[]) {
           modespec == "p" ? splitmode::one_paragraph_per_line :
           splitmode::one_sentence_per_line);
 
-  ug::ssplit::SentenceSplitter ssplit(prefix_file);
+  ug::ssplit::SentenceSplitter ssplit;
+  if (!bytearray){
+    ssplit.load(prefix_file);
+  }
+  else {
+    std::ifstream fin(prefix_file);
+    std::ostringstream std_input;
+    std_input << fin.rdbuf();
+    std::string input = std_input.str();
+    ug::ssplit::string_view buffer(input.data(), input.size());
+    ssplit.loadFromSerialized(buffer);
+  }
 
   if (input_file.size()) {
     // can be mapped (no support for gzip/bzip at this point)
