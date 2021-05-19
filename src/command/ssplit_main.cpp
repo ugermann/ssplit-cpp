@@ -154,8 +154,7 @@ int main(int argc, char const* argv[]) {
     ->check(CLI::ExistingFile);
 
   app.add_option("-b,--byte-array", bytearray, 
-                 "Use the bytearray load path, for testing purposes only")
-     ->default_str(bytearray);
+                 "Use the bytearray load path, for testing purposes only");
 
   app.footer("\nIf no input file is given, ssplit reads from stdin. "
              "Input files are memory-mapped (decompression is NOT supported!) "
