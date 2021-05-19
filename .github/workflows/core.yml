@@ -1,4 +1,4 @@
-name: "Build and test for different configurations on mac, ubuntu"
+name: "Core build test"
 
 on: 
   push: 
