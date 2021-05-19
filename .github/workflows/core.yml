@@ -3,7 +3,7 @@ name: "Build and test for different configurations on mac, ubuntu"
 on: 
   push: 
     branches: [main]
-  pull_rquest:
+  pull_request:
     branches: [main]
 
 jobs:
