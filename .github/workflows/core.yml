@@ -27,4 +27,7 @@ jobs:
       - name: Compile
         working-directory: build
         run: make -j2 VERBOSE=1
+
+    - name: "Tests"
+      run: BINARY_DIR=build bash scripts/test.sh
         
