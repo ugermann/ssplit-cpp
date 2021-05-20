@@ -2,9 +2,9 @@ name: "Core build test"
 
 on: 
   push: 
-    branches: [main, ci-sandbox]
+    branches: [main, master, ci-sandbox]
   pull_request:
-    branches: [main, ci-sandbox]
+    branches: [main, master, ci-sandbox]
 
 jobs:
   build-test:
