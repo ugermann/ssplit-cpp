@@ -5,67 +5,48 @@
 #include "regex.h"
 #include <cassert>
 
-
-namespace {
-// Anonymous namespace
-
-// Creating an input stream from constant memory
-// https://stackoverflow.com/a/13059195/4565794
-
-#include <streambuf>
-#include <istream>
-
-struct membuf: std::streambuf {
-    membuf(char const* base, size_t size) {
-        char* p(const_cast<char*>(base));
-        this->setg(p, p, p + size);
-    }
-};
-struct imemstream: virtual membuf, std::istream {
-    imemstream(char const* base, size_t size)
-        : membuf(base, size)
-        , std::istream(static_cast<std::streambuf*>(this)) {
-    }
-};
-
-
-}
-
 namespace ug{
 namespace ssplit{
 
-
+string_view readLine(const char** start, const char* const stop);
 
 // Load a prefix file
 void
 SentenceSplitter::
 load(std::string const& fname){
   std::ifstream pfile(fname);
-  loadFromStream(pfile);
-}
+  std::string line;
+  while (getline(pfile, line))
+    declarePrefix(line);
 
-void SentenceSplitter::loadFromStream(std::istream &stream){
-  prefix_type_.clear();
-  Regex pat("([^#\\s]*)\\s*(?:(#\\s*NUMERIC_ONLY\\s*#))?", PCRE2_UTF);
-  Match M(pat);
-  std::string line, prefix, tag;
-  while (getline(stream, line)) {
-    if (pat.find(line, &M) > 0) {
-      auto m1 = M[1];
-      if (m1.size()) {
-        std::string foo(m1.data(), m1.size());
-        prefix_type_[foo] = M[2].size() ? 2 : 1;
-      }
-    }
-  }
+  // for debugging
   // for (auto m: prefix_type_) {
   //   std::cout << m.first << " " << m.second << std::endl;
   // }
 }
 
+void SentenceSplitter::declarePrefix(string_view buffer) {
+  // parse a line from a prefix file and interpret it
+  static Regex pat("([^#\\s]*)\\s*(?:(#\\s*NUMERIC_ONLY\\s*#))?", PCRE2_UTF);
+  Match M(pat);
+  if (pat.find(buffer, &M) > 0) {
+    auto m1 = M[1];
+    if (m1.size()) {
+      std::string foo(m1.data(), m1.size());
+      prefix_type_[foo] = M[2].size() ? 2 : 1;
+      // for debugging:
+      // std::cerr << foo << " " << (M[2].size() ? "N" : "") << std::endl;
+    }
+  }
+}
+
 void SentenceSplitter::loadFromSerialized(const string_view buffer){
-  imemstream stream(buffer.data(), buffer.size());
-  loadFromStream(stream);
+  char const* start = buffer.data();
+  char const* stop = start + buffer.size();
+  for (string_view line = readLine(&start, stop);
+       line.data(); line = readLine(&start, stop)) {
+    declarePrefix(line);
+  }
 }
 
 SentenceSplitter::SentenceSplitter(){}
@@ -263,6 +244,9 @@ operator()(string_view* rest) const {
 // exceed the size that a string_view can store (apparently int32_t).
 // @TODO: verify: this dates back to working with pcrecpp::StringPiece.
 // Update: apparently not true any more for absl::string_view!
+// Returns a string_view to the line, not including the EOL character!
+// So an empty line returns a string_view with size() == 0 and data() != nullptr,
+// At the end of the buffer, the return value has data() == nullptr.
 string_view
 readLine(const char** start, const char* const stop) {
   string_view line;
