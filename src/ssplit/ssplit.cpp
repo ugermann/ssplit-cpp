@@ -135,7 +135,8 @@ operator()(string_view* rest) const {
   // The chunker is the first step in sentence splitting.
   // It identifies candidate split points.
   static Regex Chunker_RE("\\s*" // whitespace
-                          "([^.?!]*)" // prefix: anything up to the potential EOS marker
+                          "[^.?!]*?" // non alphanumeric stuff
+                          "(\\p{Xan}*)" // alphanumeric prefix of the potential EOS marker
                           "([.?!]++)" // the potential EOS marker
                           "(" // open group for trailing matter
                           "['\")\\]’”\\p{Pf}]*" // any "trailing matter"
