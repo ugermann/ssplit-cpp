@@ -1,0 +1,33 @@
+name: "Core build test"
+
+on: 
+  push: 
+    branches: [main, master, ci-sandbox]
+  pull_request:
+    branches: [main, master, ci-sandbox]
+
+jobs:
+  build-test:
+    strategy: 
+      fail-fast: false
+      matrix:
+          os: [ubuntu-latest, macOS-latest]
+          abseil: ['ON', 'OFF']
+          internal_pcre2: ['ON', 'OFF']
+
+    name: '${{ matrix.os }}-abseil-${{ matrix.abseil }}-internal_pcre2-${{ matrix.internal_pcre2 }}'
+    runs-on: '${{ matrix.os }}'
+    steps:
+      - uses: actions/checkout@v2
+      - name: cmake
+        run: |
+          cmake -E make_directory build
+          cd build
+          cmake -DSSPLIT_USE_INTERNAL_PCRE2='${{matrix.internal_pcre2}}' -DSSPLIT_USE_ABSEIL=${{ matrix.abseil }} ..
+      - name: Compile
+        working-directory: build
+        run: make -j2 VERBOSE=1
+
+      - name: "Tests"
+        run: BINARY_DIR=build bash scripts/test.sh
+        
