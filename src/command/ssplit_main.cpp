@@ -6,6 +6,7 @@
 #include <fcntl.h>
 #include <memory>
 #include <sys/mman.h>
+#include <sys/stat.h>
 #include <cassert>
 #include "ssplit.h"
 #include "CLI11.hpp"
@@ -153,7 +154,7 @@ int main(int argc, char const* argv[]) {
                  "File with nonbreaking prefixes.")
     ->check(CLI::ExistingFile);
 
-  app.add_option("-b,--byte-array", bytearray, 
+  app.add_option("-b,--byte-array", bytearray,
                  "Use the bytearray load path, for testing purposes only");
 
   app.footer("\nIf no input file is given, ssplit reads from stdin. "
@@ -190,8 +191,16 @@ int main(int argc, char const* argv[]) {
   }
 
   if (input_file.size()) {
-    // can be mapped (no support for gzip/bzip at this point)
-    mmap_and_split(input_file, ssplit);
+    // Check if this is a pipe or a proper file that can be mapped
+    struct stat buf;
+    stat(input_file.c_str(), &buf);
+    if (S_ISFIFO(buf.st_mode)) { // pipes cannot be mapped
+      std::ifstream text(input_file.c_str());
+      ssplit_stream(text, ssplit);
+    }
+    else { // can be mapped
+      mmap_and_split(input_file, ssplit);
+    }
   }
   else {
     ssplit_stream(std::cin, ssplit);
