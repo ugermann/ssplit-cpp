@@ -62,7 +62,7 @@ find(string_view subj, // the string (view) agains we are matching
      size_t start,           // where to start searching in the string
      uint32_t options         // search options
      ) const {
-  assert(start < subj.size());
+  assert(start <= subj.size());
   PCRE2_SIZE *ovector;
   int rc = pcre2_match(re_,                     /* the compiled pattern */
                        PCRE2_SPTR(subj.data()), /* the subject string */
