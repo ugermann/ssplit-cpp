@@ -42,6 +42,7 @@ if(SSPLIT_USE_INTERNAL_PCRE2)
     ${PCRE2_JIT_OPTION}
     -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE} # Necessary for proper MacOS compilation
     -DCMAKE_CROSSCOMPILING_EMULATOR=${CMAKE_CROSSCOMPILING_EMULATOR} # Necessary for proper MacOS compilation
+    -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true # Added for pybind11
     )
 
   # set include dirs and libraries for PCRE2
