@@ -10,10 +10,10 @@
 if(SSPLIT_USE_INTERNAL_PCRE2)
   include(ExternalProject)
 
-  set(PCRE2_VERSION "10.36")
-  set(PCRE2_TARBALL "pcre2-${PCRE2_VERSION}.tar.gz")
-  set(PCRE2_SRC_DIR
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/3rd-party/pcre2-${PCRE2_VERSION})
+  set(PCRE2_VERSION "10.39")
+  set(PCRE2_FILENAME "pcre2-${PCRE2_VERSION}")
+  set(PCRE2_TARBALL "${PCRE2_FILENAME}.tar.gz")
+  set(PCRE2_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/3rd-party/${PCRE2_FILENAME})
 
   # Download tarball only if we don't have the pcre2 source code yet.
   # For the time being, we download and unpack pcre2 into
@@ -24,7 +24,7 @@ if(SSPLIT_USE_INTERNAL_PCRE2)
   if (EXISTS ${PCRE2_SRC_DIR}/configure)
     set(PCRE2_URL "")
   else()
-    set(PCRE2_URL "https://ftp.pcre.org/pub/pcre/${PCRE2_TARBALL}")
+      set(PCRE2_URL "https://github.com/PhilipHazel/pcre2/releases/download/${PCRE2_FILENAME}/${PCRE2_TARBALL}")
     message("Downloading pcre2 source code from ${PCRE2_URL}")
   endif()
 
