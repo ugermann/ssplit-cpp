@@ -1,3 +1,0 @@
-[submodule "src/3rd-party/pcre2"]
-	path = src/3rd-party/pcre2
-	url = https://github.com/PhilipHazel/pcre2
