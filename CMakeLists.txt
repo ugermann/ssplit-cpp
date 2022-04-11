@@ -36,6 +36,7 @@ IF(SSPLIT_PREFER_STATIC_COMPILE)
   ENDIF(WIN32)
 ENDIF(SSPLIT_PREFER_STATIC_COMPILE)
 
+include(GNUInstallDirs)
 include(FindPCRE2)
 if(PCRE2_FOUND)
   include_directories(${PCRE2_INCLUDE_DIRS})
@@ -47,7 +48,6 @@ endif(PCRE2_FOUND)
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src)
 message("Added subdirectory ${CMAKE_CURRENT_SOURCE_DIR}/src")
-
 if(SSPLIT_USE_INTERNAL_PCRE2)
   add_dependencies(ssplit pcre2) # this needs to happen after adding src
 endif(SSPLIT_USE_INTERNAL_PCRE2)
