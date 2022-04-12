@@ -64,7 +64,7 @@ if(SSPLIT_USE_INTERNAL_PCRE2)
 
 else(SSPLIT_USE_INTERNAL_PCRE2)
   
-  find_library(PCRE2_LIBRARIES NAMES pcre2 pcre2-8 pcre2-8-staticd pcre2-posix-staticd)
+  find_library(PCRE2_LIBRARIES NAMES pcre2 pcre2-8 pcre2-8-static pcre2-posix-static pcre2-8-staticd pcre2-posix-staticd)
   find_path(PCRE2_INCLUDE_DIRS pcre2.h)
 
 endif(SSPLIT_USE_INTERNAL_PCRE2)
